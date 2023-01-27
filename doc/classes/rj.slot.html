@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>RoundJay</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><strong>rj.slot</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/rj.html">rj</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/rjclient.html">rjclient</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>rj.slot</code></h1>
+<p>The Slot class.</p>
+<p></p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: hugeblank</li>
+    </ul>
+
+
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot.basicDetails">rj.slot.basicDetails</a></td>
+	<td class="summary">Basic information about an item stack.</td>
+	</tr>
+</table>
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:Slot">rj.slot:Slot (inventory, slot, details)</a></td>
+	<td class="summary">Creates a slot object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:getHash">rj.slot:getHash ()</a></td>
+	<td class="summary">Get the unique hash of the item contained in a slot.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:hasNbt">rj.slot:hasNbt ()</a></td>
+	<td class="summary">Determine whether this slot has NBT</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:getNbtDetails">rj.slot:getNbtDetails ()</a></td>
+	<td class="summary">U+26A0 Get NBT details from this slot.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:getBasicDetails">rj.slot:getBasicDetails ()</a></td>
+	<td class="summary">Get basic details from this slot.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:getLocation">rj.slot:getLocation ()</a></td>
+	<td class="summary">Get the inventory and slot id this Slot object represents.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:take">rj.slot:take (to, amount, The)</a></td>
+	<td class="summary">U+26A0 Take items from this slot.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:put">rj.slot:put (from, fSlot)</a></td>
+	<td class="summary">U+26A0 Put items into this slot.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rj.slot:getCount">rj.slot:getCount ()</a></td>
+	<td class="summary">Get the amount of items in the slot.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "rj.slot.basicDetails"></a>
+    <strong>rj.slot.basicDetails</strong>
+    </dt>
+    <dd>
+    Basic information about an item stack.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The identifier of this item.
+        </li>
+        <li><span class="parameter">count</span>
+            <span class="types"><span class="type">int</span></span>
+         The amount of items in the slot.
+        </li>
+        <li><span class="parameter">nbt</span>
+            <span class="types">optional <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The NBT hash of this item.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "rj.slot:Slot"></a>
+    <strong>rj.slot:Slot (inventory, slot, details)</strong>
+    </dt>
+    <dd>
+    Creates a slot object.
+ This function is what gets returned when requiring `rj.slot`.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The inventory this slot resides in.
+        </li>
+        <li><span class="parameter">slot</span>
+            <span class="types"><span class="type">int</span></span>
+         The slot number of the inventory this slot represents.
+        </li>
+        <li><span class="parameter">details</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         The basic item details of this slot.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rj.slot:getHash"></a>
+    <strong>rj.slot:getHash ()</strong>
+    </dt>
+    <dd>
+    Get the unique hash of the item contained in a slot.
+ Note: this is not the same as the nbt hash, but rather a combination of the item identifier and nbt hash, if it exists.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        The unique item hash.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rj.slot:hasNbt"></a>
+    <strong>rj.slot:hasNbt ()</strong>
+    </dt>
+    <dd>
+    Determine whether this slot has NBT
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Whether this slot has an NBT hash or not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rj.slot:getNbtDetails"></a>
+    <strong>rj.slot:getNbtDetails ()</strong>
+    </dt>
+    <dd>
+    U+26A0 Get NBT details from this slot.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        The details of this item.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rj.slot:getBasicDetails"></a>
+    <strong>rj.slot:getBasicDetails ()</strong>
+    </dt>
+    <dd>
+    Get basic details from this slot.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/rj.slot.html#rj.slot.basicDetails">rj.slot.basicDetails</a></span>
+        The basic information about a slot.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rj.slot:getLocation"></a>
+    <strong>rj.slot:getLocation ()</strong>
+    </dt>
+    <dd>
+    Get the inventory and slot id this Slot object represents.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        The inventory of the slot.</li>
+        <li>
+           <span class="types"><a class="type" href="../classes/rj.slot.html">slot</a></span>
+        The slot number of the slot.</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rj.slot:take"></a>
+    <strong>rj.slot:take (to, amount, The)</strong>
+    </dt>
+    <dd>
+    U+26A0 Take items from this slot.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">to</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The inventory the items should be put into.
+        </li>
+        <li><span class="parameter">amount</span>
+            <span class="types"><span class="type">int</span></span>
+         The amount of items to be taken from the slot.
+        </li>
+        <li><span class="parameter">The</span>
+            <span class="types"><span class="type">tSlot</span></span>
+         optional slot id of the `to` inventory the items should be put into.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        The number of items taken from the slot.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rj.slot:put"></a>
+    <strong>rj.slot:put (from, fSlot)</strong>
+    </dt>
+    <dd>
+    U+26A0 Put items into this slot.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">from</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The inventory from which the items should be brought in from.
+        </li>
+        <li><span class="parameter">fSlot</span>
+            <span class="types"><span class="type">int</span></span>
+         The slot id of the `from` inventory in which the targeted items exist.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        the number of items put into the slot.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rj.slot:getCount"></a>
+    <strong>rj.slot:getCount ()</strong>
+    </dt>
+    <dd>
+    Get the amount of items in the slot.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        The amount of items in the slot.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-01-27 01:59:58 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

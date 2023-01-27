@@ -64,34 +64,34 @@ out.register(1, function()
     return true
 end)
 
--- Load plugins, check for base. 
--- Warn if a plugin errors.
+-- Load modules, check for base. 
+-- Warn if a module errors.
 out.register(2, function()
     local rj = require("rj")
-    rj.loadPlugins()
-    local plugins = rj.getPlugins()
+    rj.loadModules()
+    local modules = rj.getModules()
     local baseLoaded, baseFound = false, false
-    table.foreachi(plugins, function(_, plugin)
-        if not plugin.loaded then
-            logger.warn("Plugin "..plugin.path.." failed to load:")
-            logger.error(plugin.error)
+    table.foreachi(modules, function(_, module)
+        if not module.loaded then
+            logger.warn("Plugin "..module.path.." failed to load:")
+            logger.error(module.error)
         end
-        if plugin.path == "rj.modules.base" then
+        if module.path == "rj.modules.base" then
             baseFound = true
-            baseLoaded = plugin.loaded
+            baseLoaded = module.loaded
         end
     end)
     if not baseFound then
-        logger.warn("Base plugin not found. Is this a first run?")
+        logger.warn("Base module not found. Is this a first run?")
         logger.warn("If so, welcome to RoundJay!")
-        local s, err = rj.addPlugin("rj.base")
+        local s, err = rj.addModule("rj.base")
         baseLoaded = s
         if not s then
             logger.error(err)
         end
     end
     if not baseLoaded then
-        logger.error("Base plugin failed to load! What's the point!")
+        logger.error("Base module failed to load! What's the point!")
         return false
     end
     return true
