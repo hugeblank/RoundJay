@@ -1,6 +1,6 @@
-local commands = require("rj.base.commands")
-local renderers = require("rj.base.renderers")
-local completion = require("rj.base.completion")
+local commands = require("rj.modules.base.commands")
+local renderers = require("rj.modules.base.renderers")
+local completion = require("rj.modules.base.completion")
 local rj = require("rj")
 local util = require("rj.util")
 
