@@ -76,7 +76,7 @@ out.register(2, function()
             logger.warn("Plugin "..plugin.path.." failed to load:")
             logger.error(plugin.error)
         end
-        if plugin.path == "rj.base" then
+        if plugin.path == "rj.modules.base" then
             baseFound = true
             baseLoaded = plugin.loaded
         end
