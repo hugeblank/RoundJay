@@ -6,7 +6,7 @@
 -- @module rj.item
 -- @alias out
 
-local table = require("rj.table")
+local table = require("rj.tablex")
 local util = require("rj.util")
 
 local out = {}

@@ -6,7 +6,7 @@
 -- @alias out
 
 local config = require("rj.config")
-local table = require("rj.table")
+local table = require("rj.tablex")
 local Slot = require("rj.slot")
 
 local out = {}

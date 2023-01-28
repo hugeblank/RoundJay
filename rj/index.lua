@@ -7,7 +7,7 @@
 
 local util = require("rj.util")
 local fuzzy = require("rj.fuzzy")
-local table = require("rj.table")
+local table = require("rj.tablex")
 local Slot = require("rj.slot")
 local Item = require("rj.item")
 

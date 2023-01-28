@@ -6,7 +6,7 @@
 -- @alias out
 
 local expect = require("cc.expect")
-local table = require("rj.table")
+local table = require("rj.tablex")
 
 local out = {}
 local slot = {}

@@ -9,7 +9,7 @@ local version = "0.2.0"
 require("rj.client.tests").runTests()
 local completion = require("cc.completion")
 local rj = require("rj")
-local table = require("rj.table")
+local table = require("rj.tablex")
 local util = require("rj.util")
 
 

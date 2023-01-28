@@ -10,7 +10,7 @@
 local raisin = require("rj.raisin").manager(os.pullEvent)
 local expect = require("cc.expect")
 local config = require("rj.config")
-local table = require("rj.table")
+local table = require("rj.tablex")
 local index = require("rj.index")
 assert(config.load(), "Could not load config")
 

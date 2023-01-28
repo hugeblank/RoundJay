@@ -1,5 +1,5 @@
 local config = require("rj.config")
-local table = require("rj.table")
+local table = require("rj.tablex")
 local rj = require("rj")
 local logger = require("rj.client.logger")
 
