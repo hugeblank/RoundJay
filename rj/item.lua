@@ -1,4 +1,6 @@
 --- The Item class.
+-- Abstraction layer for slots containing matching items.
+-- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
 -- @author hugeblank
 -- @license MIT
 -- @module rj.item
@@ -45,6 +47,9 @@ end
 -- @tfield ?string hash The slot hash.
 -- @see rj.slot.slot.getHash
 -- @table keytable
+
+--- Class whose objects represent a specific item across all slots in the storage system.
+--@type item
 
 --- Get the keytable of the item.
 -- @treturn keytable The keytable for this item.
@@ -124,7 +129,7 @@ end
     
 --- ⚠️ Store all items from a slot into an inventory/slot pair
 -- If repeatedly calling, consider allocating `to` and `tslot` using `util.getRandomEmptySlots`.
--- @see util.getRandomEmptySlots
+-- @see rj.util.getRandomEmptySlots
 -- @tparam string from The inventory from which to pull items from.
 -- @tparam string fslot The slot in `from`.
 -- @tparam rj.slot.basicDetails fdetails The basic information about the slot being pulled from.

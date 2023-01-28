@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>RoundJay Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>RoundJay</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/rj.client.logger.html">rj.client.logger</a></li>
+  <li><a href="../modules/rj.client.tests.html">rj.client.tests</a></li>
+  <li><a href="../modules/rj.config.html">rj.config</a></li>
+  <li><a href="../modules/rj.index.html">rj.index</a></li>
+  <li><a href="../modules/rj.html">rj</a></li>
+  <li><a href="../modules/rj.item.html">rj.item</a></li>
+  <li><a href="../modules/rj.slot.html">rj.slot</a></li>
+  <li><a href="../modules/rj.tablex.html">rj.tablex</a></li>
+  <li><strong>rj.util</strong></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/rjclient.html">rjclient</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>rj.util</code></h1>
+<p>Miscellaneous utility functions used throughout RoundJay.</p>
+<p>
+ <p><b>Note:</b> functions marked with ⚠️ are yielding</p></p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: hugeblank</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getNames">getNames ()</a></td>
+	<td class="summary">⚠️ Get a list of peripheral names on the pool network that can act as storage for items.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getRandomEmptySlots">getRandomEmptySlots (amount)</a></td>
+	<td class="summary">⚠️ Get a list of random empty slots.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getRandomEmptySlot">getRandomEmptySlot ()</a></td>
+	<td class="summary">⚠️ Get a singular random empty slot.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getFreeSpace">getFreeSpace ()</a></td>
+	<td class="summary">⚠️ Get a total of the remaining free slots in the storage pool, and the total slots in the system.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#transferAndSlot">transferAndSlot (from, fslot, details, to, tslot)</a></td>
+	<td class="summary">⚠️ Transfers items to a slot, then allocates a new Slot object for them.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#closestMatch">closestMatch (query, data)</a></td>
+	<td class="summary">Get the value of the closest match of a query against keys in a table.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#parseAmount">parseAmount (item, amount)</a></td>
+	<td class="summary">Parses an amount string to determine the intended amount of items from a given item to handle.</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#emptySlot">emptySlot</a></td>
+	<td class="summary">A table representing an empty slot in the storage pool.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getNames"></a>
+    <strong>getNames ()</strong>
+    </dt>
+    <dd>
+    ⚠️ Get a list of peripheral names on the pool network that can act as storage for items.
+ Does not contain interface chest, blacklisted inventories, as well as any non-chest/non-shulker box inventories.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">{string,...}</a></span>
+        Valid inventory peripheral names.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getRandomEmptySlots"></a>
+    <strong>getRandomEmptySlots (amount)</strong>
+    </dt>
+    <dd>
+    ⚠️ Get a list of random empty slots.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">amount</span>
+            <span class="types"><span class="type">int</span></span>
+         The amount of slots to return.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../modules/rj.util.html#emptySlot">{emptySlot,...}</a></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getRandomEmptySlot"></a>
+    <strong>getRandomEmptySlot ()</strong>
+    </dt>
+    <dd>
+    ⚠️ Get a singular random empty slot.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        The inventory to which this slot belongs.</li>
+        <li>
+           <span class="types"><span class="type">int</span></span>
+        The index of this slot within the inventory.</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getFreeSpace"></a>
+    <strong>getFreeSpace ()</strong>
+    </dt>
+    <dd>
+    ⚠️ Get a total of the remaining free slots in the storage pool, and the total slots in the system.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">int</span></span>
+        empty The total number of free slots remaining in the system.</li>
+        <li>
+           <span class="types"><span class="type">int</span></span>
+        slots The total number of all slots in the system.</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "transferAndSlot"></a>
+    <strong>transferAndSlot (from, fslot, details, to, tslot)</strong>
+    </dt>
+    <dd>
+    ⚠️ Transfers items to a slot, then allocates a new Slot object for them.
+ Parameters are identical to item objects store method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">from</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The inventory from which to pull items from.
+        </li>
+        <li><span class="parameter">fslot</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The slot in `from`.
+        </li>
+        <li><span class="parameter">details</span>
+            <span class="types"><a class="type" href="../modules/rj.slot.html#basicDetails">rj.slot.basicDetails</a></span>
+         The basic information about the slot being pulled from.
+        </li>
+        <li><span class="parameter">to</span>
+            <span class="types">optional <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The inventory to put the items into.
+        </li>
+        <li><span class="parameter">tslot</span>
+            <span class="types">optional <span class="type">int</span></span>
+         The slot in `to`.
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/rj.item.html#item:store">rj.item.store</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "closestMatch"></a>
+    <strong>closestMatch (query, data)</strong>
+    </dt>
+    <dd>
+    Get the value of the closest match of a query against keys in a table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">query</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         A query string to compare to the keys of the data table.
+        </li>
+        <li><span class="parameter">data</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">{string=any}</a></span>
+         A table containing string keys.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">any</span></span>
+        The value of the string that was found to be the closest match in the data table.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "parseAmount"></a>
+    <strong>parseAmount (item, amount)</strong>
+    </dt>
+    <dd>
+    Parses an amount string to determine the intended amount of items from a given item to handle.
+ If the string "stack" is passed into amount, then the stack size of the item will be used for amount.
+ If the string "all" is passed into amount, then the total amount of items will be used for amount.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">item</span>
+            <span class="types"><a class="type" href="../modules/rj.item.html#item">rj.item.item</a></span>
+         The item to parse amount on, if necessary.
+        </li>
+        <li><span class="parameter">amount</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The numerical amount of items, "stack", or "all".
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        The amount of items to be used.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "emptySlot"></a>
+    <strong>emptySlot</strong>
+    </dt>
+    <dd>
+    A table representing an empty slot in the storage pool.
+ This is the precursor to what will eventually become a proper slot.
+ We use this as an intermediary index to push the items, <i>then</i> we turn it into a slot object.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">chest</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The inventory to which this slot belongs.
+        </li>
+        <li><span class="parameter">slot</span>
+            <span class="types"><span class="type">int</span></span>
+         The index of this slot within the inventory.
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/rj.slot.html#">rj.slot</a>
+    </ul>
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-01-27 19:33:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

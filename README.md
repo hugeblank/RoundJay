@@ -1,2 +1,2 @@
 # RoundJay
-CUI Based Inventory Management Solution for ComputerCraft
+CLI Based Inventory Management Solution for ComputerCraft

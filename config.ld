@@ -11,5 +11,7 @@ Challenging - Writing a module to interface with other peripherals.
 The documentation here is meant to provide help to those who would like to take the moderate or challenging approach to using RJ. 
 
 <b>Note:</b> functions marked with ⚠️ are yielding.
+
+Check the source on <a href="https://github.com/hugeblank/RoundJay">GitHub</a>
 ]]
 title = 'RoundJay Documentation'

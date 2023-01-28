@@ -15,7 +15,7 @@ local util = require("rj.util")
 
 --- Handles autocompletion of commands and arguments
 -- @see rj.getCompletions
--- @see util.closestMatch
+-- @see rj.util.closestMatch
 -- @tparam table commands A table where the keys are command names, and values are command action functions.
 -- @treturn function A function used in `read` to handle autocompletion.
 local function handleCompletion(commands)
@@ -63,7 +63,7 @@ end
 --- Handle shell argument parsing, user input, and files with RJ commands.
 -- @see rj.getCommands
 -- @see handleCompletion
--- @see util.closestMatch
+-- @see rj.util.closestMatch
 -- @tparam {string,...} params A table of parameters brought in from the shell. First parameter may be a file name.
 local function handleKeywords(params)
     local history = {} -- `read` history

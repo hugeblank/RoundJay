@@ -1,4 +1,5 @@
 --- The Slot class.
+-- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
 -- @author hugeblank
 -- @license MIT
 -- @module rj.slot
@@ -24,6 +25,8 @@ out.new = function(inventory, slot, details)
 end
 
 --- Basic information about an item stack.
+-- <p><b>See also:</b></p>
+-- <p><a href=https://tweaked.cc/generic_peripheral/inventory.html#v:list>cct:inventory.list</a></p>
 -- @tfield string name The identifier of this item.
 -- @tfield int count The amount of items in the slot.
 -- @tfield ?string nbt The NBT hash of this item.

@@ -1,9 +1,19 @@
+--- Miscellaneous utility functions used throughout RoundJay.
+-- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
+-- @author hugeblank
+-- @license MIT
+-- @module rj.util
+-- @alias out
+
 local config = require("rj.config")
 local table = require("rj.table")
 local Slot = require("rj.slot")
 
 local out = {}
 
+--- ⚠️ Get a list of peripheral names on the pool network that can act as storage for items.
+-- Does not contain interface chest, blacklisted inventories, as well as any non-chest/non-shulker box inventories.
+-- @treturn {string,...} Valid inventory peripheral names.
 out.getNames = function()
     local names = peripheral.call(config.get("pool"), "getNamesRemote")
     --local names = peripheral.getNames()
@@ -30,6 +40,9 @@ out.getNames = function()
     return out
 end
 
+--- ⚠️ Get a list of random empty slots.
+-- @tparam int amount The amount of slots to return.
+-- @treturn {emptySlot,...}
 out.getRandomEmptySlots = function(amount)
     local chests = out.getNames()
     local slots = {}
@@ -58,17 +71,30 @@ out.getRandomEmptySlots = function(amount)
         end
         out[i] = slots[k]
         used[k] = true
-        -- out[i] = slots[i]
     end
     
     return out
 end
 
+--- A table representing an empty slot in the storage pool.
+-- This is the precursor to what will eventually become a proper slot. 
+-- We use this as an intermediary index to push the items, <i>then</i> we turn it into a slot object.
+-- @see rj.slot
+-- @tfield string chest The inventory to which this slot belongs.
+-- @tfield int slot The index of this slot within the inventory.
+-- @table emptySlot
+
+--- ⚠️ Get a singular random empty slot.
+-- @treturn string The inventory to which this slot belongs.
+-- @treturn int The index of this slot within the inventory.
 out.getRandomEmptySlot = function()
     local slot = out.getRandomEmptySlots(1)[1]
     return slot.chest, slot.slot
 end
 
+--- ⚠️ Get a total of the remaining free slots in the storage pool, and the total slots in the system.
+-- @treturn int empty The total number of free slots remaining in the system.
+-- @treturn int slots The total number of all slots in the system.
 out.getFreeSpace = function()
     local names = out.getNames()
     local slots, empty = 0, 0
@@ -84,8 +110,14 @@ out.getFreeSpace = function()
     return empty, slots
 end
 
--- Transfers items to a slot, then allocates
--- a new Slot object for them
+--- ⚠️ Transfers items to a slot, then allocates a new Slot object for them.
+-- Parameters are identical to item objects store method.
+-- @see rj.item.store
+-- @tparam string from The inventory from which to pull items from.
+-- @tparam string fslot The slot in `from`.
+-- @tparam rj.slot.basicDetails details The basic information about the slot being pulled from.
+-- @tparam ?string to The inventory to put the items into.
+-- @tparam ?int tslot The slot in `to`.
 out.transferAndSlot = function(from, fslot, details, to, tslot)
     -- to the pool, push the items from the
     -- interface into tslot from fslot
@@ -93,6 +125,10 @@ out.transferAndSlot = function(from, fslot, details, to, tslot)
     return Slot(to, tslot, details)
 end
 
+--- Get the value of the closest match of a query against keys in a table.
+-- @tparam string query A query string to compare to the keys of the data table.
+-- @tparam {string=any} data A table containing string keys.
+-- @treturn any The value of the string that was found to be the closest match in the data table.
 out.closestMatch = function(query, data)
     local match, max
     for k, v in pairs(data) do
@@ -107,6 +143,12 @@ out.closestMatch = function(query, data)
     return match
 end
 
+--- Parses an amount string to determine the intended amount of items from a given item to handle.
+-- If the string "stack" is passed into amount, then the stack size of the item will be used for amount.
+-- If the string "all" is passed into amount, then the total amount of items will be used for amount.
+-- @tparam rj.item.item item The item to parse amount on, if necessary.
+-- @tparam string amount The numerical amount of items, "stack", or "all".
+-- @treturn int The amount of items to be used.
 out.parseAmount = function(item, amount)
     local a = tonumber(amount)
     if a then

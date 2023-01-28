@@ -7,7 +7,6 @@ local fuzzy = require("rj.fuzzy")
 local table = require("rj.table")
 local Slot = require("rj.slot")
 local Item = require("rj.item")
-local helptext = require("rj.modules.base.help")
 
 local function list(amount, ...)
     local list = {}
@@ -144,7 +143,7 @@ local function addons(...)
 end
 
 local function help()
-    return require("rj.bas.modulese.help")
+    return require("rj.base.modules.help")
 end
 
 return {

@@ -1,5 +1,6 @@
 --- RoundJay extension framework.
 -- API for adding modules, building custom commands, and adding threads to be run in parallel with other executing code.
+-- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
 -- @author hugeblank
 -- @license MIT
 -- @module rj
@@ -74,10 +75,7 @@ out.getCompletions = function()
 end
 
 --- Creates a new command builder.
--- Examples of usage can be found in 
--- @see rj.base
--- @see rj.multi
--- @see rj.client.logger
+-- Examples of usage can be found in the stock modules provided by RJ.
 -- @tparam string name Name of the command, must not be the same as an existing command.
 -- @tparam function action The function to run.
 -- @tparam ?function renderer A function that takes in the returned values from the action function, and outputs them in a readable format.
@@ -159,9 +157,9 @@ end
 
 local waitForAmount = 0
 --- Add a thread to be run concurrently with other script or module threads.
+-- Example of usage can be found in module rj.modules.multi.
 -- @tparam func f The function to be executed
--- @tparam boolean waitFor Whether to wait for this thread should others surrounding it die. Generally avoid this. 
--- @see rj.multi.init
+-- @tparam boolean waitFor Whether to wait for this thread should others surrounding it die. Generally avoid this.
 out.addThread = function(f, waitFor)
     if waitFor then
         waitForAmount = waitForAmount + 1
@@ -169,7 +167,7 @@ out.addThread = function(f, waitFor)
     return raisin.thread(f)
 end
 
---- Process all threads passed into RoundJay.
+--- ⚠️ Process all threads passed into RoundJay.
 -- When writing a client, or script, generally you want this call to be the last line in the program,
 -- to ensure everything loads properly.
 out.run = function()
