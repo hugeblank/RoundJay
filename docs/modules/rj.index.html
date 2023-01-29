@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>RoundJay Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>RoundJay</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/rj.client.logger.html">rj.client.logger</a></li>
+  <li><a href="../modules/rj.client.tests.html">rj.client.tests</a></li>
+  <li><a href="../modules/rj.config.html">rj.config</a></li>
+  <li><strong>rj.index</strong></li>
+  <li><a href="../modules/rj.html">rj</a></li>
+  <li><a href="../modules/rj.item.html">rj.item</a></li>
+  <li><a href="../modules/rj.slot.html">rj.slot</a></li>
+  <li><a href="../modules/rj.tablex.html">rj.tablex</a></li>
+  <li><a href="../modules/rj.util.html">rj.util</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/rjclient.html">rjclient</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>rj.index</code></h1>
+<p>Generates and operates on an entire index of items.</p>
+<p>
+ <p><b>Note:</b> functions marked with ⚠️ are yielding</p></p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: hugeblank</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getItemFromName">getItemFromName (name, dName)</a></td>
+	<td class="summary">Gets an item from a given Minecraft identifier, and an optional display name.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getItemFromHash">getItemFromHash (hash)</a></td>
+	<td class="summary">Gets an item that matches the common slot hash of the passed hash string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findItem">findItem (query)</a></td>
+	<td class="summary">Find an item in the index using fuzzy matching.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#addItem">addItem (item)</a></td>
+	<td class="summary">Add an item to the index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#removeItem">removeItem (item)</a></td>
+	<td class="summary">Remove an item from the index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#matchSlotHashes">matchSlotHashes (slots)</a></td>
+	<td class="summary">From a list of slots, create a hashmap of slots whose keys match.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#itemsFromHashmap">itemsFromHashmap (hashmap)</a></td>
+	<td class="summary">⚠️ Create items out of a map of slots.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#reload">reload ()</a></td>
+	<td class="summary">⚠️ Reload the item index</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#completeItemName">completeItemName (input)</a></td>
+	<td class="summary">Get a list of read-friendly completion strings.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getItemFromName"></a>
+    <strong>getItemFromName (name, dName)</strong>
+    </dt>
+    <dd>
+    Gets an item from a given Minecraft identifier, and an optional display name.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The minecraft identifier of the item to get.
+        </li>
+        <li><span class="parameter">dName</span>
+            <span class="types">optional <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The display name of the item to get.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <a class="type" href="../modules/rj.item.html#item">rj.item.item</a></span>
+        The corresponding item to the given hash, if one exists.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getItemFromHash"></a>
+    <strong>getItemFromHash (hash)</strong>
+    </dt>
+    <dd>
+    Gets an item that matches the common slot hash of the passed hash string.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">hash</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The slot hash of the item to get.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <a class="type" href="../modules/rj.item.html#item">rj.item.item</a></span>
+        The corresponding item to the given hash, if one exists.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/rj.slot.html#slot:getHash">rj.slot:getHash</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "findItem"></a>
+    <strong>findItem (query)</strong>
+    </dt>
+    <dd>
+    Find an item in the index using fuzzy matching.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">query</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The query to fuzzy match on.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <a class="type" href="../modules/rj.item.html#item">rj.item.item</a></span>
+        The closest item that matched the query, if one exists.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "addItem"></a>
+    <strong>addItem (item)</strong>
+    </dt>
+    <dd>
+    Add an item to the index.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">item</span>
+            <span class="types"><a class="type" href="../modules/rj.item.html#item">rj.item.item</a></span>
+         The item to add.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "removeItem"></a>
+    <strong>removeItem (item)</strong>
+    </dt>
+    <dd>
+    Remove an item from the index.
+ This should generally be used whenever an item has a count of 0, so those items do not display in any listings.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">item</span>
+            <span class="types"><a class="type" href="../modules/rj.item.html#item">rj.item.item</a></span>
+         The item to remove.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "matchSlotHashes"></a>
+    <strong>matchSlotHashes (slots)</strong>
+    </dt>
+    <dd>
+    From a list of slots, create a hashmap of slots whose keys match.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">slots</span>
+            <span class="types"><a class="type" href="../modules/rj.slot.html#slot">{rj.slot.slot,...}</a></span>
+         An unorganized list of slots.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">{string={rj.slot.slot,...},...}</a></span>
+        A map of slots organized on their hash.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/rj.slot.html#slot:getHash">getHash</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "itemsFromHashmap"></a>
+    <strong>itemsFromHashmap (hashmap)</strong>
+    </dt>
+    <dd>
+    ⚠️ Create items out of a map of slots.
+ This is intended to be used in combination with the above function.
+ Items created by this method directly get added to the index.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">hashmap</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">{string={rj.slot.slot,...},...}</a></span>
+         A map of slots organized on their hash.
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/rj.index.html#matchSlotHashes">matchSlotHashes</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "reload"></a>
+    <strong>reload ()</strong>
+    </dt>
+    <dd>
+    ⚠️ Reload the item index
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "completeItemName"></a>
+    <strong>completeItemName (input)</strong>
+    </dt>
+    <dd>
+    Get a list of read-friendly completion strings.
+ Given an input string will return a list of all matches based on both Minecraft Identifier and display name. Case-insensitive.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">input</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         An input string, expected to be a partially complete item name.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">{string,...}</a></span>
+        Matches containing the input string, with the part of the string that matched up to input cut off.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-01-27 19:33:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

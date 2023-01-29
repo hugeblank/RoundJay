@@ -1,5 +1,5 @@
 local config = require("rj.config")
-local table = require("rj.table")
+local table = require("rj.tablex")
 local rj = require("rj")
 local logger = require("rj.client.logger")
 
@@ -30,17 +30,16 @@ local function daemon()
     end
 end
 
-rj.buildCommand("blacklist")
-  .action(function()
-      return table.clone(blacklist)
-  end)
-  .renderer(function()
-      logger.info("Blacklisted inventories:")
-      table.foreachi(blacklist, function(_, chest)
-          logger.info("  "..chest)
-      end)
-  end)
-  .build()
+rj.addCommand("blacklist", 
+function()
+    return config.get("blacklist")
+end,
+function()
+    logger.info("Blacklisted inventories:")
+    table.foreachi(blacklist, function(_, chest)
+        logger.info("  "..chest)
+    end)
+end)
 
 rj.addThread(daemon, true)
 modem.transmit(60, 60, config.get("interface"))

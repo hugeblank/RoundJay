@@ -1,16 +1,25 @@
--- Tests to be done before entering CUI
+--- Tests to be done before entering CLI
+-- @author hugeblank
+-- @license MIT
+-- @module rj.client.tests
+-- @alias out
+
 local config = require("rj.config")
 local logger = require("rj.client.logger")
 
 local tests = {}
 local out = {}
 
--- Test must return true/false for pass/fail.
--- Must also have a priority greater than one
+--- Register a test function that can error correct, or ask for input should something go wrong.
+-- Examples can be found in the source.
+-- @tparam number priority The priority of this test, lower number = higher priority. Must be greater than 1.
+-- @tparam function test The test function to run. Must return true/false for pass/fail.
 out.register = function(priority, test)
     table.insert(tests, priority, test)
 end
 
+--- Run all registered tests.
+-- This function is meant to be used by clients and scripts before user input is prompted, or script is ran.
 out.runTests = function()
     for i = 1, #tests do
         if not tests[i]() then
@@ -64,34 +73,35 @@ out.register(1, function()
     return true
 end)
 
--- Load plugins, check for base. 
--- Warn if a plugin errors.
+-- Load modules, check for base. 
+-- Warn if a module errors.
+-- Error if base errors.
 out.register(2, function()
     local rj = require("rj")
-    rj.loadPlugins()
-    local plugins = rj.getPlugins()
+    rj.loadModules()
+    local modules = rj.getModules()
     local baseLoaded, baseFound = false, false
-    table.foreachi(plugins, function(_, plugin)
-        if not plugin.loaded then
-            logger.warn("Plugin "..plugin.path.." failed to load:")
-            logger.error(plugin.error)
+    table.foreachi(modules, function(_, module)
+        if not module.loaded then
+            logger.warn("Plugin "..module.path.." failed to load:")
+            logger.error(module.error)
         end
-        if plugin.path == "rj.modules.base" then
+        if module.path == "rj.modules.base" then
             baseFound = true
-            baseLoaded = plugin.loaded
+            baseLoaded = module.loaded
         end
     end)
     if not baseFound then
-        logger.warn("Base plugin not found. Is this a first run?")
+        logger.warn("Base module not found. Is this a first run?")
         logger.warn("If so, welcome to RoundJay!")
-        local s, err = rj.addPlugin("rj.base")
+        local s, err = rj.addModule("rj.modules.base")
         baseLoaded = s
         if not s then
             logger.error(err)
         end
     end
     if not baseLoaded then
-        logger.error("Base plugin failed to load! What's the point!")
+        logger.error("Base module failed to load! What's the point!")
         return false
     end
     return true
