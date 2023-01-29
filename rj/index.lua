@@ -14,6 +14,13 @@ local Item = require("rj.item")
 local out = {}
 local items -- call reload if nil
 
+--- Gets the entire item index
+-- @treturn ?{rj.item.keytable=rj.item.item,...} The list of items internally used by index
+out.get = function()
+    return items
+end
+
+
 --- Gets an item from a given Minecraft identifier, and an optional display name.
 -- @tparam string name The minecraft identifier of the item to get.
 -- @tparam ?string dName The display name of the item to get.
@@ -66,14 +73,14 @@ end
 --- Add an item to the index.
 -- @tparam rj.item.item item The item to add.
 out.addItem = function(item)
-    items[item.getKey()] = item
+    items[item:getKey()] = item
 end
 
 --- Remove an item from the index.
 -- This should generally be used whenever an item has a count of 0, so those items do not display in any listings.
 -- @tparam rj.item.item item The item to remove.
 out.removeItem = function(item)
-    items[item.getKey()] = nil
+    items[item:getKey()] = nil
 end
 
 -- Whenever creating new items, the following two
@@ -109,7 +116,7 @@ out.itemsFromHashmap = function(hashmap)
         local item = out.getItemFromHash(hash)
         if not item then
             local slot = table.remove(slots, 1)
-            item = Item(slot)
+            item = Item.new(slot)
         end
         table.foreachi(slots, function(_, slot)
             item:addSlot(slot)
@@ -126,7 +133,7 @@ out.reload = function()
     table.aforeachi(names, function(_, name)
         local list = peripheral.call(name, "list")
         table.foreach(list, function(k, basic)
-            slots[#slots+1] = Slot(name, k, basic)
+            slots[#slots+1] = Slot.new(name, k, basic)
         end)
     end)
     local hashes = out.matchSlotHashes(slots)

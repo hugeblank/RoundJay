@@ -94,7 +94,7 @@ out.register(2, function()
     if not baseFound then
         logger.warn("Base module not found. Is this a first run?")
         logger.warn("If so, welcome to RoundJay!")
-        local s, err = rj.addModule("rj.base")
+        local s, err = rj.addModule("rj.modules.base")
         baseLoaded = s
         if not s then
             logger.error(err)

@@ -118,11 +118,12 @@ end
 -- @tparam rj.slot.basicDetails details The basic information about the slot being pulled from.
 -- @tparam ?string to The inventory to put the items into.
 -- @tparam ?int tslot The slot in `to`.
+-- @treturn rj.slot.slot The slot that the items were stored into.
 out.transferAndSlot = function(from, fslot, details, to, tslot)
     -- to the pool, push the items from the
     -- interface into tslot from fslot
-    local c = peripheral.call(to, "pullItems", from, fslot, 64, tslot)
-    return Slot(to, tslot, details)
+    peripheral.call(to, "pullItems", from, fslot, 64, tslot)
+    return Slot.new(to, tslot, details)
 end
 
 --- Get the value of the closest match of a query against keys in a table.
@@ -154,9 +155,9 @@ out.parseAmount = function(item, amount)
     if a then
         amount = a
     elseif amount == "all" then
-        amount = item.getCount()
+        amount = item:getCount()
     elseif amount == "stack" then
-        amount = item.details().metadata.maxCount
+        amount = item:details().metadata.maxCount
     else
         error("Invalid amount value: "..amount)
     end

@@ -31,13 +31,13 @@ local function runCommand(self, tArgs, doRender)
         local s, err = pcall(function() out = table.pack(self.action(table.unpack(tArgs))) end)
         if not s then
             printError("Error in command "..self.name..":\n"..err)
-            if self.format then
-                print(self.format)
+            if self.usage then
+                print(self.usage)
             end 
             return false, err
         end
-        if self.render then
-            local s, err = pcall(function() self.render(table.unpack(out)) end)
+        if self.renderer then
+            local s, err = pcall(function() self.renderer(table.unpack(out)) end)
             if not s then
                 printError("Error in rendering "..self.name..":\n"..err)
                 return false, err

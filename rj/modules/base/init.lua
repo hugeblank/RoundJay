@@ -1,14 +1,14 @@
 local expect = require("cc.expect")
 local index = require("rj.index")
+local rj = require("rj")
+local util = require("rj.util")
 
 local commands, renderers, completion = {}, {}, {}
 
 --- Commands ---
 do -- Collapse using arrow in IDE
     local table = require("rj.tablex")
-    local rj = require("rj")
     local config = require("rj.config")
-    local util = require("rj.util")
     local fuzzy = require("rj.fuzzy")
     local Slot = require("rj.slot")
 
@@ -56,7 +56,7 @@ do -- Collapse using arrow in IDE
         if not selected then
             return false, query
         end
-        return index.findItem(query).details()
+        return selected:details()
     end
 
     commands.flush = function(inv)
@@ -103,7 +103,7 @@ do -- Collapse using arrow in IDE
                 local nSlot = util.transferAndSlot(inv, sli, slot:getBasicDetails(), rinv, rslot)
                 newInPool[#newInPool+1] = nSlot
             else
-                item.store(inv, sli, slot:getBasicDetails(), rinv, rslot)
+                item:store(inv, sli, slot:getBasicDetails(), rinv, rslot)
             end
         end)
         local hashes = index.matchSlotHashes(newInPool)
@@ -128,7 +128,7 @@ do -- Collapse using arrow in IDE
                 end
             end)
             if not exists then
-                local s, e = rj.addPlugin(args[2])
+                local s, e = rj.addModule(args[2])
                 if not s then
                     error(e)
                 end
@@ -137,7 +137,7 @@ do -- Collapse using arrow in IDE
                 error("Module "..args[2].." already loaded!")
             end
         elseif args[1] == "remove" then
-            if not rj.removePlugin(args[2]) then
+            if not rj.removeModule(args[2]) then
                 error("No such module "..args[2]..".")
             end
             return "removed", args[2]
@@ -177,7 +177,7 @@ do
         end
     end
     
-    renderers.listTable = function(t, prefix)
+    local function listTable(t, prefix)
         local content = ""
         for k, v in pairs(t) do
             if type(k) == "number" then
@@ -201,7 +201,7 @@ do
     
     renderers.pull = function(amount, item)
         if amount then
-            logger.info("Pulled "..item.getKey().dName.." x"..amount)
+            logger.info("Pulled "..item:getKey().dName.." x"..amount)
         else
             logger.warn("No item found matching "..item)
         end
@@ -284,10 +284,10 @@ end
 --- Registering Commands ---
 
 rj.addCommand("help", commands.help, renderers.help)
-rj.addCommand("info", commands.info, renderers.info)
+rj.addCommand("info", util.getFreeSpace, renderers.info)
 rj.addCommand("list", commands.list, renderers.list, completion.fromQuery, "list <amount=100|query>")
 rj.addCommand("flush", commands.flush, renderers.flush, nil, "flush [inventory]")
-rj.addCommand("refresh", commands.refresh, renderers.refresh)
+rj.addCommand("refresh", index.reload, renderers.refresh)
 rj.addCommand("pull", commands.pull, renderers.pull, completion.pull, "pull <amount> <query>")
 rj.addCommand("details", commands.details, renderers.details, completion.fromQuery, "details <query>")
 rj.addCommand("modules", commands.modules, renderers.modules, completion.modules, "modules <\"list\"|\"add\" <path>|\"remove\" <path>>")

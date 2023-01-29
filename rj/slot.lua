@@ -15,13 +15,12 @@ local slot = {}
 -- @tparam string inventory The inventory this slot resides in.
 -- @tparam int slot The slot number of the inventory this slot represents.
 -- @tparam table details The basic item details of this slot.
--- @treturn slot A slot object representing the parameters given.
-out.new = function(inventory, slot, details)
+-- @treturn nSlot A slot object representing the parameters given.
+out.new = function(inventory, nSlot, details)
     expect(1, inventory, "string")
-    expect(2, slot, "number")
+    expect(2, nSlot, "number")
     expect(3, details, "table")
-        
-    return setmetatable(table.clone(slot), {__index={inventory = inventory, slot = slot, details = details}})
+    return setmetatable(table.clone(slot), {__index={inventory = inventory, slot = nSlot, details = details}})
 end
 
 --- Basic information about an item stack.
@@ -40,6 +39,7 @@ end
 -- @treturn string The unique item hash.
 function slot:getHash()
     local s = ""
+    if not self then print(debug.traceback()) end
     if self.details.nbt then
         s = " "..self.details.nbt
     end
@@ -70,7 +70,7 @@ end
 -- @treturn string The inventory of the slot.
 -- @treturn int The slot number of the slot.
 function slot:getLocation()
-    return self.inventory, slot
+    return self.inventory, self.slot
 end
     
 --- ⚠️ Take items from this slot.
@@ -90,7 +90,7 @@ end
 -- @treturn int the number of items put into the slot.
 function slot:put(from, fSlot)
     -- Assumes the max stack size for any item is 64.
-    local c = peripheral.call(inventory, "pullItems", from, fSlot, 64, self.slot)
+    local c = peripheral.call(self.inventory, "pullItems", from, fSlot, 64, self.slot)
     self.details.count = self.details.count+c
     return c
 end

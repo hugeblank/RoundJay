@@ -15,9 +15,9 @@ local item = {}
 --- ⚠️ Create a new item.
 -- @tparam rj.slot.slot slot An initial slot to identify this item.
 out.new = function(slot)
-    local key, slots = {}, {s}
+    local key, slots = {}, {slot}
     -- yielding
-    local nbtDetails = s:getNbtDetails()
+    local nbtDetails = slot:getNbtDetails()
     local mt = {
         __index = {
             key = key,
@@ -26,12 +26,12 @@ out.new = function(slot)
         }
     }
     do
-        local basic = s:getBasicDetails()
-        key.hash = s:getHash()
+        local basic = slot:getBasicDetails()
+        key.hash = slot:getHash()
         key.name = basic.name
         key.dName = nbtDetails.displayName
         local enc = nbtDetails.enchantments
-        if s:hasNbt() and enc then
+        if slot:hasNbt() and enc then
             for i = 1, #enc do
                 key.dName = enc[i].displayName.." "..key.dName
             end
@@ -61,7 +61,7 @@ end
 -- Slot hashes MUST match between the keytable and the slot argument!
 -- @tparam rj.slot.slot slot The slot to add to this item.
 function item:addSlot(slot)
-    assert(slot.getHash() == self.key.hash, "hash mismatch! expected "..self.key.hash.." got "..slot.getHash())
+    assert(slot:getHash() == self.key.hash, "hash mismatch! expected "..self.key.hash.." got "..slot:getHash())
     table.insert(self.slots, slot)
 end
 
@@ -70,7 +70,7 @@ end
 function item:getCount()
     local amount = 0
     table.foreachi(self.slots, function(_, slot)
-        local c = slot.getCount()
+        local c = slot:getCount()
         amount = amount + c
     end)
     return amount
@@ -92,7 +92,13 @@ end
 --- Get all details of this item
 -- @treturn itemDetail
 function item:details()
-    local o = s.getBasicDetails()
+    if not self then
+        printError(debug.traceback())
+    end
+    if #self.slots == 0 then
+        return
+    end
+    local o = self.slots[1]:getBasicDetails()
     o.count = nil
     local sinfo = {}
     table.foreachi(self.slots, function(_, slot)
@@ -150,8 +156,8 @@ function item:store(from, fslot, fdetails, to, tslot)
         newSlot()
     else
         table.foreachi(self.slots, function(i, slot)
-            if slot.getCount() < self.nbtDetails.maxCount then
-                local c = slot.put(from, fslot)
+            if slot:getCount() < self.nbtDetails.maxCount then
+                local c = slot:put(from, fslot)
                 count = count - c
                 if count == 0 then 
                     return
