@@ -17,3 +17,4 @@ Pastebin (SC3 exclusive):
 ```
 pastebin run FJAhzNmuqQ
 ```
+Note that [mbs](https://github.com/SquidDev-CC/mbs/) is also highly recommended for terminal scrollback capabilities when using the stock client. If on SwitchCraft, installation is as easy as running `mbs install` and rebooting.
