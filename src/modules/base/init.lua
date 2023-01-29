@@ -122,8 +122,8 @@ do -- Collapse using arrow in IDE
             return "list", modules
         elseif args[1] == "add" then
             local exists = false
-            table.foreachi(modules, function()
-                if modules.path == args[2] then
+            table.foreachi(modules, function(_, module)
+                if module.path == args[2] then
                     exists = true
                 end
             end)
@@ -133,7 +133,7 @@ do -- Collapse using arrow in IDE
                     error(e)
                 end
                 return "added", args[2]
-            else
+            else 
                 error("Module "..args[2].." already loaded!")
             end
         elseif args[1] == "remove" then
@@ -267,7 +267,10 @@ do
         elseif #words > 1 and words[1] ~= "list" then
             table.remove(words, 1)
             local prefix = table.concat(words, " ")
-            local paths = fs.complete(prefix:gsub("%.", "/"), "/")
+            -- I don't *think* is this the right way to complete a require path, 
+            -- but I genuinely don't know what the alternative is. require() is WACK.
+            local runPath = shell.getRunningProgram():gsub("[^/]*%.lua$", "")
+            local paths = fs.complete(prefix:gsub("%.", "/"), runPath)
             local completions = {}
             table.foreachi(paths, function(_, path)
                 local rpath = path:gsub("%..*", ""):gsub("/", "%.")

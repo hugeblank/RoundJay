@@ -51,19 +51,19 @@ end
 out.findItem = function(query)
     local lquery = query:lower()
     local match, max
-    for k, v in pairs(items) do
-        if k.name:lower():gsub(".+:", "") == lquery then
-            return v
+    for key, item in pairs(items) do
+        if key.name:lower():gsub(".+:", "") == lquery then
+            return item
         end
-        local c = fuzzy(k.dName, query)
+        local distance = fuzzy(key.dName, query)
         -- Fuzzy match first
-        if not max or (c and c < max) then
-            match, max = v, c
+        if not max or (distance and distance < max) then
+            match, max = item, distance
         -- If matches are equal then favor the
         -- item the pool has more of
-        elseif not max or (c and c == max) then
-            if match.getCount() < v.getCount() then
-                match = v
+        elseif not max or (distance and distance == max) then
+            if match:getCount() < item:getCount() then
+                match = item
             end
         end
     end
