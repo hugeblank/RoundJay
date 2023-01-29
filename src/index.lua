@@ -2,14 +2,14 @@
 -- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
 -- @author hugeblank
 -- @license MIT
--- @module rj.index
+-- @module src.index
 -- @alias out
 
-local util = require("rj.util")
-local fuzzy = require("rj.fuzzy")
-local table = require("rj.tablex")
-local Slot = require("rj.slot")
-local Item = require("rj.item")
+local util = require("src.util")
+local fuzzy = require("src.fuzzy")
+local table = require("src.tablex")
+local Slot = require("src.slot")
+local Item = require("src.item")
 
 local out = {}
 local items -- call reload if nil
@@ -34,7 +34,7 @@ out.getItemFromName = function(name, dName)
 end
 
 --- Gets an item that matches the common slot hash of the passed hash string.
--- @see rj.slot:getHash
+-- @see src.slot:getHash
 -- @tparam string hash The slot hash of the item to get.
 -- @treturn ?rj.item.item The corresponding item to the given hash, if one exists.
 out.getItemFromHash = function(hash)
@@ -90,7 +90,7 @@ end
 -- insert into existing ones where possible.
 
 --- From a list of slots, create a hashmap of slots whose keys match.
--- @see rj.slot.slot:getHash
+-- @see src.slot.slot:getHash
 -- @tparam {rj.slot.slot,...} slots An unorganized list of slots.
 -- @treturn {string={rj.slot.slot,...},...} A map of slots organized on their hash.
 out.matchSlotHashes = function(slots)

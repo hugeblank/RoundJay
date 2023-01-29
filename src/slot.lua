@@ -2,20 +2,20 @@
 -- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
 -- @author hugeblank
 -- @license MIT
--- @module rj.slot
+-- @module src.slot
 -- @alias out
 
 local expect = require("cc.expect")
-local table = require("rj.tablex")
+local table = require("src.tablex")
 
 local out = {}
 local slot = {}
 
 --- Creates a slot object.
 -- @tparam string inventory The inventory this slot resides in.
--- @tparam int slot The slot number of the inventory this slot represents.
+-- @tparam int nSlot The slot number of the inventory this slot represents.
 -- @tparam table details The basic item details of this slot.
--- @treturn nSlot A slot object representing the parameters given.
+-- @treturn Slot A slot object representing the parameters given.
 out.new = function(inventory, nSlot, details)
     expect(1, inventory, "string")
     expect(2, nSlot, "number")

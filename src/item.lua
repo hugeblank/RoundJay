@@ -3,11 +3,11 @@
 -- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
 -- @author hugeblank
 -- @license MIT
--- @module rj.item
+-- @module src.item
 -- @alias out
 
-local table = require("rj.tablex")
-local util = require("rj.util")
+local table = require("src.tablex")
+local util = require("src.util")
 
 local out = {}
 local item = {}
@@ -45,7 +45,7 @@ end
 -- @tfield string name The item identifier.
 -- @tfield string dName The display name, optionally contains display names of enchantments prefixing item name.
 -- @tfield ?string hash The slot hash.
--- @see rj.slot.slot.getHash
+-- @see src.slot.slot.getHash
 -- @table keytable
 
 --- Class whose objects represent a specific item across all slots in the storage system.
@@ -135,7 +135,7 @@ end
     
 --- ⚠️ Store all items from a slot into an inventory/slot pair
 -- If repeatedly calling, consider allocating `to` and `tslot` using `util.getRandomEmptySlots`.
--- @see rj.util.getRandomEmptySlots
+-- @see src.util.getRandomEmptySlots
 -- @tparam string from The inventory from which to pull items from.
 -- @tparam string fslot The slot in `from`.
 -- @tparam rj.slot.basicDetails fdetails The basic information about the slot being pulled from.

@@ -3,7 +3,7 @@
 -- By default the config is found in the root directory at /.rjcfg, but can also be loaded from /.rj.cfg, or /rj.cfg.
 -- @author hugeblank
 -- @license MIT
--- @module rj.config
+-- @module src.config
 -- @alias out
 
 local out = {}

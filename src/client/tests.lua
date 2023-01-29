@@ -1,11 +1,11 @@
 --- Tests to be done before entering CLI
 -- @author hugeblank
 -- @license MIT
--- @module rj.client.tests
+-- @module src.client.tests
 -- @alias out
 
-local config = require("rj.config")
-local logger = require("rj.client.logger")
+local config = require("src.config")
+local logger = require("src.client.logger")
 
 local tests = {}
 local out = {}
@@ -77,7 +77,7 @@ end)
 -- Warn if a module errors.
 -- Error if base errors.
 out.register(2, function()
-    local rj = require("rj")
+    local rj = require("src")
     rj.loadModules()
     local modules = rj.getModules()
     local baseLoaded, baseFound = false, false
@@ -86,7 +86,7 @@ out.register(2, function()
             logger.warn("Plugin "..module.path.." failed to load:")
             logger.error(module.error)
         end
-        if module.path == "rj.modules.base" then
+        if module.path == "src.modules.base" then
             baseFound = true
             baseLoaded = module.loaded
         end
@@ -94,7 +94,7 @@ out.register(2, function()
     if not baseFound then
         logger.warn("Base module not found. Is this a first run?")
         logger.warn("If so, welcome to RoundJay!")
-        local s, err = rj.addModule("rj.modules.base")
+        local s, err = rj.addModule("src.modules.base")
         baseLoaded = s
         if not s then
             logger.error(err)

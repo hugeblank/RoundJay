@@ -4,7 +4,7 @@
 -- @see table
 -- @author hugeblank
 -- @license MIT
--- @module rj.tablex
+-- @module src.tablex
 -- @alias tab
 
 local nMaxCoros = 128

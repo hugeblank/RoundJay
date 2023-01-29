@@ -3,15 +3,15 @@
 -- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
 -- @author hugeblank
 -- @license MIT
--- @module rj
+-- @module src
 -- @alias out
 
 -- Libraries
-local raisin = require("rj.raisin").manager(os.pullEvent)
+local raisin = require("src.raisin").manager(os.pullEvent)
 local expect = require("cc.expect")
-local config = require("rj.config")
-local table = require("rj.tablex")
-local index = require("rj.index")
+local config = require("src.config")
+local table = require("src.tablex")
+local index = require("src.index")
 assert(config.load(), "Could not load config")
 
 local out = {}
@@ -63,8 +63,7 @@ out.getCommands = function()
 end
 
 --- Get a list of completion functions for the built commands.
--- Primarily used for clients that are operating on user input. 
--- @see rjclient
+-- Primarily used for clients that are operating on user input.
 -- @treturn {[string]=function} A table where the keys are command names, and values are completion functions, if they exist.
 out.getCompletions = function()
     local out = {}

@@ -1,16 +1,16 @@
 local expect = require("cc.expect")
-local index = require("rj.index")
-local rj = require("rj")
-local util = require("rj.util")
+local index = require("src.index")
+local rj = require("src")
+local util = require("src.util")
 
 local commands, renderers, completion = {}, {}, {}
 
 --- Commands ---
 do -- Collapse using arrow in IDE
-    local table = require("rj.tablex")
-    local config = require("rj.config")
-    local fuzzy = require("rj.fuzzy")
-    local Slot = require("rj.slot")
+    local table = require("src.tablex")
+    local config = require("src.config")
+    local fuzzy = require("src.fuzzy")
+    local Slot = require("src.slot")
 
     commands.list = function(amount, ...)
         local list = {}
@@ -147,13 +147,13 @@ do -- Collapse using arrow in IDE
     end
 
     commands.help = function()
-        return require("rj.modules.base.help")
+        return require("src.modules.base.help")
     end
 end
 
 --- Renderers ---
 do
-    local logger = require("rj.client.logger")
+    local logger = require("src.client.logger")
 
     renderers.help = function(htext)
         logger.info(htext)

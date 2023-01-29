@@ -2,12 +2,12 @@
 -- <p><b>Note:</b> functions marked with ⚠️ are yielding</p>
 -- @author hugeblank
 -- @license MIT
--- @module rj.util
+-- @module src.util
 -- @alias out
 
-local config = require("rj.config")
-local table = require("rj.tablex")
-local Slot = require("rj.slot")
+local config = require("src.config")
+local table = require("src.tablex")
+local Slot = require("src.slot")
 
 local out = {}
 
@@ -79,7 +79,7 @@ end
 --- A table representing an empty slot in the storage pool.
 -- This is the precursor to what will eventually become a proper slot. 
 -- We use this as an intermediary index to push the items, <i>then</i> we turn it into a slot object.
--- @see rj.slot
+-- @see src.slot
 -- @tfield string chest The inventory to which this slot belongs.
 -- @tfield int slot The index of this slot within the inventory.
 -- @table emptySlot
@@ -112,7 +112,7 @@ end
 
 --- ⚠️ Transfers items to a slot, then allocates a new Slot object for them.
 -- Parameters are identical to item objects store method.
--- @see rj.item.store
+-- @see src.item.store
 -- @tparam string from The inventory from which to pull items from.
 -- @tparam string fslot The slot in `from`.
 -- @tparam rj.slot.basicDetails details The basic information about the slot being pulled from.

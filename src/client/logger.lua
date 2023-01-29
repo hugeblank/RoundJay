@@ -2,7 +2,7 @@
 -- Loggers for RoundJay. Intended use is for renderer methods. action methods should not output anything, only error().
 -- @author hugeblank
 -- @license MIT
--- @module rj.client.logger
+-- @module src.client.logger
 
 local expect = require("cc.expect").expect
 local maxLevel = 1

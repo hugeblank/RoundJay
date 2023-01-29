@@ -1,7 +1,7 @@
-local config = require("rj.config")
-local table = require("rj.tablex")
-local rj = require("rj")
-local logger = require("rj.client.logger")
+local config = require("src.config")
+local table = require("src.tablex")
+local rj = require("src")
+local logger = require("src.client.logger")
 
 local modem = peripheral.wrap(config.get("pool"))
 local blacklist = config.get("blacklist") or {}
