@@ -2,7 +2,7 @@ local expect = require "cc.expect".expect
 
 local adjacency_bonus = 5
 local leading_letter_penalty = -3
-local leading_letter_penalty_max = -9
+local leading_letter_penalty_max = -math.huge
 local unmatched_letter_penalty = -1
 
 --[[- Determines if an input string `str` matches a given search `pattern`.
