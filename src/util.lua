@@ -29,7 +29,7 @@ out.getNames = function()
         end
         -- Cannot be interface, or non-inventory,
         -- or non-chest/shulker box
-        if name == config.get("interface") or generic ~= "inventory" or not (type:find("chest") or type:find("shulker_box")) then
+        if name == config.get("interface") or generic ~= "inventory" or not (type:find("chest") or type:find("shulker_box") or type:find("barrel")) then
             names[i] = nil
         end
     end
