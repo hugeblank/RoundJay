@@ -3,7 +3,6 @@ local table = require "src.common.api.tablex"
 local ClassBuilder = require "src.common.api.class"
 local Slot = require "src.server.api.slot"
 local Item = require "src.server.api.item"
-local Transaction = require "src.server.api.transaction"
 
 --- Class whose objects represent a collection of items across one or more storage.
 -- <p><b>Note:</b> functions marked with ⚠️ may yield.</p>
@@ -147,14 +146,71 @@ function Index:refreshFreeCache(callback)
 end
 
 --- ⚠️ Transfer items between this index and another.
--- This is just a wrapper for transaction:move(). If moving repeatedly between the same indicies, it is recommended to avoid this method, and use the transaction module.
---- @see Transaction
 --- @param otherIndex Index The other index to move items between.
 --- @param item Item The item or item hash to perform the move on.
 --- @param amount integer The amount of items to move between the two indices. Positive moves go from this index to the other index (push). Negative moves go from the other index to this index (pull).
 --- @return integer # Amount of items that were successfully moved.
 function Index:move(otherIndex, item, amount)
-    return Transaction:new(self, otherIndex):move(item:getHash(), amount)
+    if amount < 0 then
+        return 0
+    end
+    -- Get the respective item from both sides if present.
+    local fromItem, toItem = item, otherIndex:getItemFromHash(item:getHash())
+
+    if not fromItem then
+        return 0 -- If there isn't an item from which to take from, then give up
+    end
+
+    amount = math.min(amount, fromItem:getCount())
+    local o = amount -- Hold the amount to subtract from when we're finished moving items
+    if toItem then -- If there's a matching item in the index we're moving the items to
+        os.pullEvent(paralyze.batch.ivalue(toItem.slots, function(toSlot) -- Fill partially filled slots first
+            if toSlot:getCount() < toItem.nbt.maxCount then -- This could be better.
+                amount = amount - toSlot:putItem(fromItem)
+            end
+        end))
+    end
+    -- tfns - List of functions handling full slot move operations
+    -- 
+    local tfns, slots = {}, {}
+    if amount > 0 then -- If there's still more items to be moved
+        -- Get n empty slots, where n is the max amount of operations needed to fulfill the remaining move
+        -- It could be less due to running out of space
+        -- We represent this by returning the amount we were able to move at the end of the operation
+        local emptySlots = otherIndex:getEmptySlots(math.ceil(amount / fromItem.nbt.maxCount))
+        for _, emptySlot in ipairs(emptySlots) do
+            tfns[#tfns + 1] = function() -- move the items, and create a slot object
+                local rawdetails = {
+                    name = fromItem:getIdentifier(),
+                }
+                local nbt = fromItem:getHash():gsub("^.*#?", "")
+                if #nbt > 0 then
+                    rawdetails.nbt = nbt
+                end
+                if amount > 0 then
+                    local amt = fromItem:take(emptySlot.chest, emptySlot.slot, amount) -- Take up to a stack from the item
+                    local details = table.clone(rawdetails)
+                    details.count = amt
+                    slots[#slots + 1] = Slot:new(emptySlot.chest, emptySlot.slot, details)
+                    amount = amount - amt
+                end
+            end
+        end
+    end
+    os.pullEvent(paralyze.addBatch(tfns)) -- Execute calculated operations
+    if not toItem then -- If there wasn't an item in the index we're transferring to, create one
+        toItem = Item:new(table.remove(slots, 1))
+        otherIndex:addItem(toItem)
+    end
+    for _, slot in ipairs(slots) do -- Add all the new slots created by the transfer
+        toItem:addSlot(slot)
+    end
+    if fromItem:getCount() == 0 then -- If we cleared out the item from the source, remove it from the index
+        self:removeItem(fromItem)
+    end
+    otherIndex:refreshFreeCache()
+    self:refreshFreeCache()
+    return o - amount
 end
 
 --- ⚠️ Get a total of the remaining free slots in the storage pool, and the total slots in the system.

@@ -22,14 +22,9 @@ local PlayerInterface = ClassBuilder:new(Device)
 --- @field inventory string Source inventory peripheral ID
 --- @field source integer|nil Network ID of the device to pull items from
 --- @field target integer|nil Network ID of the device to push items back to
---- @field network PINetworkDetails Network info for sharing details with client computers
+--- @field whitelist integer[]|nil List of computer ids that can send messages to this interface when used in a local network
 --- @field accepts fun(source: Device, item: Item, amount: integer, index: Index)|nil Custom accepts function, called after the device completes its accepts checks
 --- @field contains fun(target: Device, item: Item|string, amount: integer, index:Index)|nil Custom contains function, called after the device completes its contains checks
-
---- Network info for sharing details with client computers
---- @class PINetworkDetails
---- @field channel number Modem channel to use. Default: 0
---- @field whitelist integer[]|nil List of computer ids that can send messages to this interface when used in a local network
 
 --- ⚠️ Internal constructor for PlayerInterface object
 -- If extending from this class, be sure to call this method in your constructor (see internals of this method as a reference).
@@ -46,16 +41,14 @@ function PlayerInterface:__new(id, playerInterfaceConfig)
     self.details = playerInterfaceConfig.details
     self.targets = type(self.details.target) == "number" and { registry.getDevice(self.details.target) } or registry.getDevicesOfRole("storage")
     self.sources = type(self.details.source) == "number" and { registry.getDevice(self.details.source) } or registry.getDevicesOfRole("storage")
-    if self.details.network then
-        network.addBroadcast("roundjay:base/player_interface/log")
-        network.addBroadcast("roundjay:base/player_interface/completion_names")
-        network.addListener("roundjay:base/player_interface/pull")
-        network.addListener("roundjay:base/player_interface/flush")
-        network.addListener("roundjay:base/player_interface/list")
-        network.addListener("roundjay:base/player_interface/details")
-        network.addListener("roundjay:base/player_interface/info")
-        network.addListener("roundjay:base/player_interface/get_completion_names")
-    end
+    network.addBroadcast("roundjay:base/player_interface/log")
+    network.addBroadcast("roundjay:base/player_interface/completion_names")
+    network.addListener("roundjay:base/player_interface/pull")
+    network.addListener("roundjay:base/player_interface/flush")
+    network.addListener("roundjay:base/player_interface/list")
+    network.addListener("roundjay:base/player_interface/details")
+    network.addListener("roundjay:base/player_interface/info")
+    network.addListener("roundjay:base/player_interface/get_completion_names")
     self.logger:addListener(function(entry)
         os.queueEvent("roundjay:base/player_interface/log", {
             did = self.id,
@@ -328,9 +321,9 @@ function PlayerInterface:run()
             if data.id ~= self.id then
                 return
             end
-            if self.details.network and self.details.network.whitelist and data.cid then
+            if self.details and self.details.whitelist and data.cid then
                 local allow = false
-                for _, cid in ipairs(self.details.network.whitelist) do
+                for _, cid in ipairs(self.details.whitelist) do
                     if cid == data.cid then
                         allow = true
                         break

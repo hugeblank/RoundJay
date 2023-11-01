@@ -53,7 +53,7 @@ end
 -- Devices of the 'import', 'storage', and 'convert' role should probably override this method.
 --- @see ImportBus.contains | A simple example of the contains method
 --- @param target Device The device making the request.
---- @param item Item|string The item or item hash requested.
+--- @param item Item The item requested.
 --- @return integer # The amount of the item this device is making available for the target device.
 function Device:contains(target, item)
     return 0

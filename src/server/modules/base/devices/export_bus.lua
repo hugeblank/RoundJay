@@ -85,7 +85,7 @@ function ExportBus:run()
         for _, source in ipairs(sources) do
             for hash, requested in pairs(self.details.whitelist) do
                 local sourceItem
-                if hash:find("#") then
+                if hash:find("#") then -- Not a big fan of this
                     sourceItem = source.index:getItemFromHash(hash)
                 else
                     sourceItem = source.index:getItemFromName(hash)

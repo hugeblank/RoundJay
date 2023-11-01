@@ -36,15 +36,10 @@ end
 --- ⚠️ The target device is making a request for the given item (or item hash). Return the amount that may be allocated.
 --- @see ImportBus.contains | A simple example of the contains method
 --- @param target Device The device making the request.
---- @param item Item|string The item or item hash requested.
+--- @param item Item The item or item hash requested.
 --- @return integer # The amount of the item this device is making available for the target device.
 function ImportBus:contains(target, item)
-    local indItem
-    if type(item) == "string" then
-        indItem = self.index:getItemFromHash(item)
-    else
-        indItem = self.index:getItemFromHash(item:getHash())
-    end
+    local indItem = self.index:getItemFromHash(item:getHash())
     local count = indItem and indItem:getCount() or 0
     if type(self.details.contains) == "function" then
         count = self.details.contains(target, item, count, self.index) or count
