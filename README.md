@@ -18,12 +18,21 @@ Out of the box it comes with:
 Check out the `rj_example` directory for an explanation on configuration, and storage network setup.
 
 ## Install
-Wget:
+
+Server & Client
 ```
-wget run https://p.sc3.io/FJAhzNmuqQ
+wget run https://raw.githubusercontent.com/hugeblank/qs-cc/master/src/gget.lua hugeblank roundjay main /roundjay
 ```
-Pastebin (SC3 exclusive):
+Server Only
 ```
-pastebin run FJAhzNmuqQ
+wget run https://raw.githubusercontent.com/hugeblank/qs-cc/master/src/gget.lua hugeblank roundjay server /roundjay
 ```
-Note that [mbs](https://github.com/SquidDev-CC/mbs/) is also highly recommended for terminal scrollback capabilities when using the stock client. If on SwitchCraft, installation is as easy as running `mbs install` and rebooting.
+
+Client Only
+```
+wget run https://raw.githubusercontent.com/hugeblank/qs-cc/master/src/gget.lua hugeblank roundjay client /roundjay
+```
+
+## Develop
+
+It's recommended to use vscode and the [ComputerCraft Extension Pack](https://marketplace.visualstudio.com/items?itemName=lemmmy.computercraft-extension-pack). Documentation and metadata will immediately load and be navigable with ctrl+click.
