@@ -1,0 +1,43 @@
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  push-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git fetch
+          git checkout client
+          git merge --squash -X theirs main --allow-unrelated-histories
+          git rm -rf .github src/server example_rj/server server.lua definitions
+          if [ $(git diff HEAD | wc -l) -gt 0 ]
+          then
+            git add .
+            git commit -m "Client changes on ${{ github.sha }}"
+            git push
+          else
+            echo "no changes"
+          fi
+  push-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git fetch
+          git checkout server
+          git merge --squash -X theirs main --allow-unrelated-histories
+          git rm -rf .github src/client example_rj/client client.lua definitions
+          if [ $(git diff HEAD | wc -l) -gt 0 ]
+          then
+            git add .
+            git commit -m "Server changes on ${{ github.sha }}"
+            git push
+          else
+            echo "no changes"
+          fi
