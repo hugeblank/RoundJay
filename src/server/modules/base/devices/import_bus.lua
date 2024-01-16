@@ -1,11 +1,9 @@
 local registry = require "src.server.api.registry"
-local Index = require "src.server.api.index"
 local Device = require "src.server.api.device"
 local ClassBuilder = require "src.common.api.class"
-local Logger = require "src.common.api.logger"
 
 --- @class ImportBus: Device
---- @field new fun(self: Class, importBusConfig: importBusConfig): ImportBus --- ⚠️ Create a new ImportBus.
+--- @field new fun(self: Class, id: integer, importBusConfig: importBusConfig): ImportBus --- ⚠️ Create a new ImportBus.
 --- @field private super Device
 local ImportBus = ClassBuilder:new(Device)
 
@@ -25,11 +23,12 @@ local ImportBus = ClassBuilder:new(Device)
 --- @see ImportBus.new
 --- @param id integer
 --- @param importBusConfig importBusConfig
-function ImportBus:__new(id, importBusConfig)
+--- @param network Network
+function ImportBus:__new(id, importBusConfig, network)
     assert(importBusConfig.details, "Import Bus requires additional details field in network configuration (<device>.details)")
     assert(importBusConfig.details.inventory, "Import Bus requires a source inventory (<device>.details.inventory)")
-    self.logger = Logger:new(importBusConfig.type .. "/" .. id)
-    self.super:__new(id, "import", importBusConfig.type, Index:new(importBusConfig.side, { importBusConfig.details.inventory }, self.logger))
+
+    self.super:__new(id, importBusConfig, network, { importBusConfig.details.inventory })
     self.details = importBusConfig.details
 end
 
@@ -54,7 +53,7 @@ function ImportBus:run()
         if self.details.target then
             devices = { registry.getDevice(self.details.target) }
         else
-            devices = registry.getDevicesOfRole("storage")
+            devices = registry.getDevices()
         end
         local items = self.index:get()
         for key, item in pairs(items) do

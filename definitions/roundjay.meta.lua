@@ -13,3 +13,7 @@
 ---@class list_item_pie: player_interface_event
 ---@field query? string Query string of requested item to list, might be a partial name
 ---@field limit? integer Optional item limit
+
+--- @class init_device_entry
+--- @field device Device
+--- @field network Network

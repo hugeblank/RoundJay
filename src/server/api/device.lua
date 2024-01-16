@@ -3,10 +3,9 @@ local Index = require "src.server.api.index"
 local Logger = require "src.common.api.logger"
 
 --- Abstract device class, partially implements functionality.
--- Constructor accepts a deviceConfig provided by the server initialization, and an index created by the sub-device.
+-- Index should be created by 
 -- <p><b>Note:</b> functions marked with ⚠️ may yield.</p>
 --- @class Device: Class
---- @field role "import"|"export"|"storage"|"convert"|"dummy" Role of this device
 --- @field type string Custom type name of this device
 --- @field protected index Index inventory index for this device
 local Device = ClassBuilder:new()
@@ -18,15 +17,18 @@ local Device = ClassBuilder:new()
 --- Internal constructor for Device object
 -- If extending from this class, be sure to call this method in your constructor (self.super:__new(...))
 --- @protected
---- @param id integer
---- @param role "import"|"export"|"storage"|"convert"|"dummy"
---- @param type string
---- @param index Index
-function Device:__new(id, role, type, index)
+--- @param deviceConfig deviceConfig
+--- @param network Network
+--- @param inventories string[]?
+function Device:__new(id, deviceConfig, network, inventories)
     self.id = id
-    self.role = role
-    self.type = type
-    self.index = index
+    self.type = deviceConfig.type
+    self.network = network
+    self.logger = Logger:new(deviceConfig.type .. "/" .. id)
+    if not inventories or (inventories and #inventories == 0)then
+        self.logger:log("warn", "No inventories provided for device "..id..", index will be functionally nil")
+    end
+    self.index = Index:new(deviceConfig.side, inventories or {}, self.logger)
 end
 
 --- Return true if the device is compatible with the given type.

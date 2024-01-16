@@ -2,7 +2,7 @@ local config = require "rj.client.config"
 local logger = (require "src.common.api.logger"):new("client")
 local table = require "src.common.api.tablex"
 local paralyze = require "src.common.api.paralyze"
-local network  = require "src.common.api.network"
+local Network  = require "src.common.api.network"
 local prompt   = require "src.client.api.prompt"
 local completion = require "cc.completion"
 
@@ -21,6 +21,8 @@ logger.addGlobalListener(function(entry)
     logger.renderEntry(entry)
 end)
 
+
+local network = Network:new("client")
 local modpath = "src/client/modules/"
 local modules, batch, commands = {}, {}, {} --- @type table<string, table>, function[], Command[]
 -- initialize all modules
@@ -36,13 +38,14 @@ for _, namespace in ipairs(fs.list(path(modpath))) do
             if not config.modules[namespace] then
                 logger:log("warn", "Missing config for module \"" .. namespace .. "\"")
             end
-            local loadedcmds = mod.load(config.modules[namespace], logger)
+            local modnet = network:subnet(namespace)
+            local loadedcmds = mod.load(config.modules[namespace], modnet, logger)
             for _, command in ipairs(loadedcmds) do ---@cast command Command
                 commands[#commands+1] = command
             end
             if type(mod.run) == "function" then
                 batch[#batch+1] = function()
-                    mod.run(config.modules[namespace], logger)
+                    mod.run(config.modules[namespace], modnet, logger)
                 end
             end
         else
@@ -57,7 +60,7 @@ if config.networking and config.networking.enabled then
         batch[#batch + 1] = function()
             local channel = config.networking.channel or 0
             logger:log("info", "Networking enabled. Modem", tostring(config.networking.side), "channel", channel)
-            network.run(config.networking.side, channel)
+            Network.run(config.networking.side, channel)
         end
     elseif haschannel then
         logger:log("error",

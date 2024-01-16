@@ -75,7 +75,7 @@ end
 
 --- ⚠️ Take items from this slot.
 --- @param to string The inventory the items should be put into.
---- @param tSlot integer The optional slot id of the `to` inventory the items should be put into.
+--- @param tSlot integer The optional slot id of the `to` inventory the items should be taken from.
 --- @param amount integer The amount of items to be taken from the slot.
 --- @return integer # The number of items taken from the slot.
 function Slot:take(to, tSlot, amount)
@@ -90,17 +90,17 @@ end
 --- @param fSlot integer The slot id of the `from` inventory in which the targeted items exist.
 --- @return integer # the number of items put into the slot.
 function Slot:put(from, fSlot)
-    -- Assumes the max stack size for any item is 64.
-    local c = peripheral.call(self.inventory, "pullItems", from, fSlot, 64, self.slot)
+    local c = peripheral.call(self.inventory, "pullItems", from, fSlot, nil, self.slot)
     self.details.count = self.details.count + c
     return c
 end
 
 --- ⚠️ Put items into this slot using an Item object.
 --- @param fromItem Item The inventory from which the items should be brought in from.
+--- @param amount integer? The amount of items to put into the slot
 --- @return integer # the number of items put into the slot.
-function Slot:putItem(fromItem)
-    local c = fromItem:take(self.inventory, self.slot, 64)
+function Slot:putItem(fromItem, amount)
+    local c = fromItem:take(self.inventory, self.slot, amount or 64)
     self.details.count = self.details.count + c
     return c
 end

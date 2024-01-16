@@ -1,9 +1,8 @@
 local ClassBuilder = require "src.common.api.class"
 local Command = require "src.client.api.command"
-local network = require "src.common.api.network"
 
 --- @class InfoCommand: Command
---- @field new fun(self: Command, interfaceId: integer): InfoCommand
+--- @field new fun(self: Command, network: Network, interfaceId: integer): InfoCommand
 --- @field private super Command
 local InfoCommand = ClassBuilder:new(Command)
 
@@ -11,15 +10,16 @@ local InfoCommand = ClassBuilder:new(Command)
 -- If extending from this class, be sure to call this method in your constructor (see internals of this method as a reference).
 --- @protected
 --- @see InfoCommand.new
+--- @param network Network Network to register broadcasted events to
 --- @param id integer Interface ID to target
-function InfoCommand:__new(id)
-    self.super:__new("roundjay:info")
+function InfoCommand:__new(network, id)
+    self.super:__new("base/info", network)
     self.id = id
-    network.addBroadcast("roundjay:base/player_interface/info")
+    self.event_name = network:addBroadcast("get_info")
 end
 
 function InfoCommand:execute(params)
-    os.queueEvent("roundjay:base/player_interface/info", {
+    os.queueEvent(self.event_name, {
         id = self.id,
         cid = os.getComputerID()
     })

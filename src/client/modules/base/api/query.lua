@@ -1,7 +1,5 @@
 local ClassBuilder = require "src.common.api.class"
 local Command = require "src.client.api.command"
-local network = require "src.common.api.network"
-local completion = require "cc.completion"
 
 --- @class QueryCommand: Command
 --- @field private super Command
@@ -10,9 +8,10 @@ local QueryCommand = ClassBuilder:new(Command)
 --- Internal constructor for QueryCommand object
 -- If extending from this class, be sure to call this method in your constructor (see internals of this method as a reference).
 --- @protected
----@param name string
-function QueryCommand:__new(name)
-    self.super:__new(name)
+--- @param name string Name of the command
+--- @param network Network Network on which this command can submit events through
+function QueryCommand:__new(name, network)
+    self.super:__new(name, network)
 end
 
 function QueryCommand:setNames(items)

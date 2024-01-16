@@ -4,7 +4,7 @@ return { -- The network on which this server oversees.
         -- All devices are required to have a side, a type, and a role.
         -- The role is determined by the device handler. All devices of the same type must have the same role
         side = "back",              -- What side this device can be interfaced from. Multi-device operations require that this match.
-        type = "roundjay:basic_storage", -- Determines the behavior, and to which module the device should be directed to for processing.
+        type = "base/basic_storage", -- Determines the behavior, and to which module the device should be directed to for processing.
         details = {                 -- The specific details of this device, may affect how it performs its role.
             inventories = { -- Required list of inventories that comprise the device.
                 ... -- These must be peripheral ID strings.
@@ -28,7 +28,7 @@ return { -- The network on which this server oversees.
     { -- interface chests do both export and import, but has no specific logic behind *what* it requests/returns, as it is controlled by a player.
       -- As such, in the device's class it is registered with a "convert" role
         side = "back",
-        type = "roundjay:player_interface",
+        type = "base/player_interface",
         details = {
             inventory = "sc-goodies:iron_chest_1309", -- Required inventory that this device represents
             source = 1, -- Optional default device to source items from
@@ -41,7 +41,7 @@ return { -- The network on which this server oversees.
     },
     {
         side = "back",
-        type = "roundjay:import_bus",
+        type = "base/import_bus",
         details = {
             -- You may choose to import directly to an export bus, which acts like a pipe! Note that items within this pipe are opaque to clients.
             target = 1,                               -- optional network index of the default target device for items to be pushed to. If nil, devices with the storage role will be iterated.
@@ -54,7 +54,7 @@ return { -- The network on which this server oversees.
     },
     {
         side = "back",
-        type = "roundjay:export_bus",
+        type = "base/export_bus",
         details = {
             source = 1, -- optional network index of the default target device for items to be pulled from. If nil, devices with the storage role will be iterated.
             inventory = "sc-goodies:gold_chest_1234", -- inventory peripheral ID to push the items out to
