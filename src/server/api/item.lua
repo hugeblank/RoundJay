@@ -118,15 +118,17 @@ end
 --- @param toLocation string The inventory to put the items
 --- @param toSlot integer The slot to put the items
 --- @param count integer The amount of items to provide. If greater than the total amount of items, will pull from all slots.
+--- @param slotOffset integer?
 --- @return integer # The amount of items taken.
-function Item:take(toLocation, toSlot, count)
+function Item:take(toLocation, toSlot, count, slotOffset)
     count = math.min(count, self.nbt.maxCount)
-    local slot = table.remove(self.slots, 1)
+    local slot = self.slots[slotOffset or 1] --- @type Slot
+    while slot and slot:getCount() == 0 do
+        table.remove(self.slots, 1)
+        slot = self.slots[1]
+    end
     if slot then
         local amount = slot:take(toLocation, toSlot, count)
-        if slot:getCount() > 0 then
-            self.slots[#self.slots+1] = slot
-        end
         return amount
     end
     return 0

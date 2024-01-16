@@ -20,17 +20,10 @@ function registry.getDevice(id)
     return network[id]
 end
 
----Get a table of devices that are of the provided role
----@param role "import"|"export"|"storage"|"convert"|"dummy"
+---Get all registered devices
 ---@return Device[]
-function registry.getDevicesOfRole(role)
-    local ret = {}
-    for _, device in pairs(network) do
-        if device.role == role then
-            ret[#ret + 1] = device
-        end
-    end
-    return ret
+function registry.getDevices()
+    return table.clone(network)
 end
 
 return registry

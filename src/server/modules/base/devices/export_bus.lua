@@ -1,8 +1,6 @@
 local registry = require "src.server.api.registry"
-local Index = require "src.server.api.index"
 local ClassBuilder = require "src.common.api.class"
 local Device = require "src.server.api.device"
-local Logger = require "src.common.api.logger"
 
 --- @class ExportBus: Device
 --- @field new fun(self: Class, exportBusConfig: exportBusConfig): ExportBus --- ⚠️ Create a new ExportBus.
@@ -26,11 +24,12 @@ local ExportBus = ClassBuilder:new(Device)
 --- @see ExportBus.new
 --- @param id integer
 --- @param exportBusConfig exportBusConfig
-function ExportBus:__new(id, exportBusConfig)
+--- @param network Network
+function ExportBus:__new(id, exportBusConfig, network)
     assert(exportBusConfig.details, "Export Bus requires additional details (<device>.details)")
     assert(exportBusConfig.details.inventory, "Export Bus requires a target inventory (<device>.details.inventory)")
-    self.logger = Logger:new(exportBusConfig.type .. "/" .. id)
-    self.super:__new(id, "export", exportBusConfig.type, Index:new(exportBusConfig.side, { exportBusConfig.details.inventory }, self.logger))
+
+    self.super:__new(id, exportBusConfig, network, { exportBusConfig.details.inventory })
     self.details = exportBusConfig.details
 end
 
@@ -80,7 +79,7 @@ function ExportBus:run()
                 source
             }
         else
-            sources = registry.getDevicesOfRole("storage")
+            sources = registry.getDevices()
         end
         for _, source in ipairs(sources) do
             for hash, requested in pairs(self.details.whitelist) do

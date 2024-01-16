@@ -1,14 +1,13 @@
 local fuzzy = require "src.server.api.fuzzy"
-local Index = require "src.server.api.index"
 local ClassBuilder = require "src.common.api.class"
-local Logger = require "src.common.api.logger"
+local Device = require("src.server.api.device")
 
 --- Roundjay's vanilla implementation of a basic storage device.
 -- <p><b>Note:</b> functions marked with ⚠️ may yield.</p>
 --- @class BasicStorage: Device
 --- @field new fun(self: Class, basicStorageConfig: basicStorageConfig): BasicStorage --- ⚠️ Create a new BasicStorage.
 --- @field private super Device
-local BasicStorage = ClassBuilder:new(require("src.server.api.device"))
+local BasicStorage = ClassBuilder:new(Device)
 
 --- @class basicStorageConfig: deviceConfig
 --- @field details basicStorageDetails
@@ -25,12 +24,12 @@ local BasicStorage = ClassBuilder:new(require("src.server.api.device"))
 --- @see BasicStorage.new
 --- @param id integer
 --- @param basicStorageConfig basicStorageConfig
-function BasicStorage:__new(id, basicStorageConfig)
+--- @param network Network
+function BasicStorage:__new(id, basicStorageConfig, network)
     assert(basicStorageConfig.details, "Basic Storage requires additional details (<device>.details)")
     assert(basicStorageConfig.details.inventories,
         "Basic Storage requires a source inventories (<device>.details.inventories)")
-    self.logger = Logger:new(basicStorageConfig.type .. "/" .. id)
-    self.super:__new(id, "storage", basicStorageConfig.type, Index:new(basicStorageConfig.side, basicStorageConfig.details.inventories, self.logger))
+    self.super:__new(id, basicStorageConfig, network, basicStorageConfig.details.inventories)
     self.details = basicStorageConfig.details
 end
 

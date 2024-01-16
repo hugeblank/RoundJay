@@ -166,19 +166,19 @@ function Index:move(otherIndex, item, amount)
     if toItem then -- If there's a matching item in the index we're moving the items to
         os.pullEvent(paralyze.batch.ivalue(toItem.slots, function(toSlot) -- Fill partially filled slots first
             if toSlot:getCount() < toItem.nbt.maxCount then -- This could be better.
-                amount = amount - toSlot:putItem(fromItem)
+                local sub = toSlot:putItem(fromItem, amount)
+                amount = amount - sub
             end
         end))
     end
-    -- tfns - List of functions handling full slot move operations
-    -- 
-    local tfns, slots = {}, {}
     if amount > 0 then -- If there's still more items to be moved
+        -- tfns - List of functions handling full slot move operations
+        local tfns, slots = {}, {}
         -- Get n empty slots, where n is the max amount of operations needed to fulfill the remaining move
         -- It could be less due to running out of space
         -- We represent this by returning the amount we were able to move at the end of the operation
         local emptySlots = otherIndex:getEmptySlots(math.ceil(amount / fromItem.nbt.maxCount))
-        for _, emptySlot in ipairs(emptySlots) do
+        for offset, emptySlot in ipairs(emptySlots) do
             tfns[#tfns + 1] = function() -- move the items, and create a slot object
                 local rawdetails = {
                     name = fromItem:getIdentifier(),
@@ -188,22 +188,30 @@ function Index:move(otherIndex, item, amount)
                     rawdetails.nbt = nbt
                 end
                 if amount > 0 then
-                    local amt = fromItem:take(emptySlot.chest, emptySlot.slot, amount) -- Take up to a stack from the item
+                    -- Take up to a stack from the item, slot offset keeps us from trying to eat from the same slot
+                    local amt = fromItem:take(emptySlot.chest, emptySlot.slot, amount, offset)
+                    amount = amount - amt
                     local details = table.clone(rawdetails)
                     details.count = amt
                     slots[#slots + 1] = Slot:new(emptySlot.chest, emptySlot.slot, details)
-                    amount = amount - amt
                 end
             end
         end
-    end
-    os.pullEvent(paralyze.addBatch(tfns)) -- Execute calculated operations
-    if not toItem then -- If there wasn't an item in the index we're transferring to, create one
-        toItem = Item:new(table.remove(slots, 1))
-        otherIndex:addItem(toItem)
-    end
-    for _, slot in ipairs(slots) do -- Add all the new slots created by the transfer
-        toItem:addSlot(slot)
+        os.pullEvent(paralyze.addBatch(tfns)) -- Execute calculated operations
+        if not toItem then                    -- If there wasn't an item in the index we're transferring to, create one
+            toItem = Item:new(table.remove(slots, 1))
+            otherIndex:addItem(toItem)
+            -- One more pass over all the new slots
+        end
+        for _, slot in ipairs(slots) do -- Add all the new slots created by the transfer
+            toItem:addSlot(slot)
+        end
+        os.pullEvent(paralyze.batch.ivalue(toItem.slots, function(toSlot) -- Fill partially filled slots first
+            if toSlot:getCount() < toItem.nbt.maxCount then -- This could be better.
+                local sub = toSlot:putItem(fromItem, amount)
+                amount = amount - sub
+            end
+        end))
     end
     if fromItem:getCount() == 0 then -- If we cleared out the item from the source, remove it from the index
         self:removeItem(fromItem)

@@ -1,9 +1,6 @@
 local table = require "src.common.api.tablex"
 local paralyze = require "src.common.api.paralyze"
-local network = require "src.common.api.network"
 local ClassBuilder = require "src.common.api.class"
-local Logger = require "src.common.api.logger"
-local Index = require "src.server.api.index"
 local Device = require "src.server.api.device"
 local registry = require "src.server.api.registry"
 
@@ -32,25 +29,19 @@ local PlayerInterface = ClassBuilder:new(Device)
 --- @see PlayerInterface.new
 --- @param id integer
 --- @param playerInterfaceConfig playerInterfaceConfig
-function PlayerInterface:__new(id, playerInterfaceConfig)
+--- @param network Network
+function PlayerInterface:__new(id, playerInterfaceConfig, network)
     assert(playerInterfaceConfig.details, "Player Interface requires additional details (<device>.details)")
     assert(playerInterfaceConfig.details.inventory, "Player Interface requires a central inventory (<device>.details.inventory)")
 
-    self.logger = Logger:new(playerInterfaceConfig.type .. "/" .. id)
-    self.super:__new(id, "convert", playerInterfaceConfig.type, Index:new(playerInterfaceConfig.side, { playerInterfaceConfig.details.inventory }, self.logger))
+    self.super:__new(id, playerInterfaceConfig, network, { playerInterfaceConfig.details.inventory })
     self.details = playerInterfaceConfig.details
-    self.targets = type(self.details.target) == "number" and { registry.getDevice(self.details.target) } or registry.getDevicesOfRole("storage")
-    self.sources = type(self.details.source) == "number" and { registry.getDevice(self.details.source) } or registry.getDevicesOfRole("storage")
-    network.addBroadcast("roundjay:base/player_interface/log")
-    network.addBroadcast("roundjay:base/player_interface/completion_names")
-    network.addListener("roundjay:base/player_interface/pull")
-    network.addListener("roundjay:base/player_interface/flush")
-    network.addListener("roundjay:base/player_interface/list")
-    network.addListener("roundjay:base/player_interface/details")
-    network.addListener("roundjay:base/player_interface/info")
-    network.addListener("roundjay:base/player_interface/get_completion_names")
+    self.targets = type(self.details.target) == "number" and { registry.getDevice(self.details.target) } or registry.getDevices()
+    self.sources = type(self.details.source) == "number" and { registry.getDevice(self.details.source) } or registry.getDevices()
+    local log = self.network:addBroadcast("log")
+    self.completion_names = self.network:addBroadcast("completion_names")
     self.logger:addListener(function(entry)
-        os.queueEvent("roundjay:base/player_interface/log", {
+        os.queueEvent(log, {
             did = self.id,
             entry = entry
         })
@@ -101,6 +92,18 @@ function PlayerInterface:contains(target, item)
     return count
 end
 
+--- Run the device handler. The server takes this method and provides the device ID of this device for ease of use.
+function PlayerInterface:run()
+    self.network:addListener("client/base/player_interface/pull", self:wrapper(PlayerInterface.pull))
+    self.network:addListener("client/base/player_interface/flush", self:wrapper(PlayerInterface.flush))
+    self.network:addListener("client/base/player_interface/get_list", self:wrapper(PlayerInterface.list))
+    self.network:addListener("client/base/player_interface/get_details", self:wrapper(PlayerInterface.itemDetails))
+    self.network:addListener("client/base/player_interface/get_info", self:wrapper(PlayerInterface.info))
+    self.network:addListener("client/base/player_interface/get_completion_names", self:wrapper(PlayerInterface.sendNames))
+end
+
+-- ## Custom Class Methods ## --
+
 local function listTable(t, prefix)
     if not prefix then prefix = " " end
     local content = ""
@@ -124,15 +127,18 @@ local function listTable(t, prefix)
     return content
 end
 
----
+--- Pull items from storage -> interface
 --- @param data pull_item_pie
 function PlayerInterface:pull(data)
+    if not self:shouldExecute(data) then
+        return
+    end
     self.index:reload()
     if type(data.query) == "string" then
         local itemsources = {} --- @type table<integer, { item: Item, source: BasicStorage }>
         local displayName
         for _, source in ipairs(self.sources) do
-            if source.type == "roundjay:basic_storage" then
+            if source:is("base/basic_storage") then
                 local item = source:findItem(data.query) ---@cast item Item
                 if item then
                     if not displayName then
@@ -187,7 +193,10 @@ function PlayerInterface:pull(data)
     self:sendNames()
 end
 
-function PlayerInterface:flush()
+function PlayerInterface:flush(data)
+    if not self:shouldExecute(data) then
+        return
+    end
     local amount = 0
     self.index:reload()
     for key, item in pairs(self.index:get()) do
@@ -211,10 +220,13 @@ end
 ---
 ---@param data query_item_pie
 function PlayerInterface:itemDetails(data)
+    if not self:shouldExecute(data) then
+        return
+    end
     if type(data.query) == "string" then
         local deets, entries = {}, false
         for _, source in ipairs(self.sources) do
-            if source:is("roundjay:basic_storage") then
+            if source:is("base/basic_storage") then
                 local item = source:findItem(data.query) ---@cast item Item
                 if item then
                     deets[source.id] = item.nbt
@@ -236,10 +248,13 @@ end
 ---
 ---@param data list_item_pie
 function PlayerInterface:list(data)
+    if not self:shouldExecute(data) then
+        return
+    end
     if (not data.query or type(data.query) == "string") and (not data.limit or type(data.limit) == "number") then
         local items = {}
         for _, source in ipairs(self.sources) do
-            if source:is("roundjay:basic_storage") then
+            if source:is("base/basic_storage") then
                 local list = source:list(data.query)
                 for hash, item in pairs(list) do
                     if items[hash] then -- Merge similar items together
@@ -266,14 +281,17 @@ function PlayerInterface:list(data)
             end
         end
         self.logger:log("info", "Item list:\n" .. table.concat(sorted, "\n"))
-        self:sendNames() -- Send the names - client might see something that was recently added, and may desire autocompletion.
+        self:sendNames() -- Send the names - client user might see something that was recently added, and may desire autocompletion.
     end
 end
 
-function PlayerInterface:info()
+function PlayerInterface:info(data)
+    if not self:shouldExecute(data) then
+        return
+    end
     local free, total = 0, 0
     for _, device in ipairs(self.sources) do
-        if device:is("roundjay:basic_storage") then
+        if device:is("base/basic_storage") then
             local tfree, ttotal = device:getFreeSpace()
             free, total = free + tfree, total + ttotal
         end
@@ -292,7 +310,7 @@ end
 function PlayerInterface:sendNames()
     local added, items = {}, {} ---@type table<string, string>, string[]
     for _, source in ipairs(self.sources) do
-        if source:is("roundjay:basic_storage") then
+        if source:is("base/basic_storage") then
             local list = source:list()
             for hash, item in pairs(list) do
                 if not added[hash] then
@@ -302,40 +320,36 @@ function PlayerInterface:sendNames()
             end
         end
     end
-    os.queueEvent("roundjay:base/player_interface/completion_names", items)
+    os.queueEvent(self.completion_names, items)
 end
 
---- Run the device handler. The server takes this method and provides the device ID of this device for ease of use.
-function PlayerInterface:run()
-    local handlers = {
-        ["roundjay:base/player_interface/pull"] = PlayerInterface.pull,
-        ["roundjay:base/player_interface/flush"] = PlayerInterface.flush,
-        ["roundjay:base/player_interface/details"] = PlayerInterface.itemDetails,
-        ["roundjay:base/player_interface/list"] = PlayerInterface.list,
-        ["roundjay:base/player_interface/info"] = PlayerInterface.info,
-        ["roundjay:base/player_interface/get_completion_names"] = PlayerInterface.sendNames
-    }
-    paralyze.bifurcate(function()
-        local e, data = os.pullEvent() ---@type string, player_interface_event
-        if handlers[e] and type(data) == "table" then
-            if data.id ~= self.id then
-                return
-            end
-            if self.details and self.details.whitelist and data.cid then
-                local allow = false
-                for _, cid in ipairs(self.details.whitelist) do
-                    if cid == data.cid then
-                        allow = true
-                        break
-                    end
-                end
-                if not allow then return end
-            end
-            return handlers[e], data
+function PlayerInterface:shouldExecute(data)
+    if data.id ~= self.id then
+        return false -- Event wasn't meant for us
+    end
+    if self.details and self.details.whitelist then
+        if not data.cid then
+            return false -- No computer id even though we expect one
         end
-    end, function(action, data)
-        action(self, data)
-    end)
+        local allow = false
+        for _, cid in ipairs(self.details.whitelist) do
+            if cid == data.cid then
+                allow = true
+                break
+            end
+        end
+        if not allow then
+            return false -- Not a computer id we work for
+        end
+    end
+    return true
+end
+
+--- @private
+function PlayerInterface:wrapper(callback)
+    return function(data)
+        return callback(self, data)
+    end
 end
 
 return PlayerInterface

@@ -1,4 +1,3 @@
-
 return {
     networking = {
         enabled = true, -- Whether networking to other clients (besides this computer) should be enabled 
@@ -8,16 +7,16 @@ return {
     modules = {
         ["base"] = {
             devices = {
-                ["roundjay:basic_storage"] = {
+                ["base/basic_storage"] = {
                     enabled = true
                 },
-                ["roundjay:import_bus"] = {
+                ["base/import_bus"] = {
                     enabled = true
                 },
-                ["roundjay:export_bus"] = {
+                ["base/export_bus"] = {
                     enabled = true
                 },
-                ["roundjay:player_interface"] = {
+                ["base/player_interface"] = {
                     enabled = true
                 }
             }

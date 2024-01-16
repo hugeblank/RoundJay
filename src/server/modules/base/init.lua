@@ -2,10 +2,10 @@ local out = {}
 
 local function getDevices()
     return {
-        ["roundjay:basic_storage"] = require("src.server.modules.base.devices.basic_storage"),
-        ["roundjay:export_bus"] = require("src.server.modules.base.devices.export_bus"),
-        ["roundjay:import_bus"] = require("src.server.modules.base.devices.import_bus"),
-        ["roundjay:player_interface"] = require("src.server.modules.base.devices.player_interface"),
+        ["base/basic_storage"] = require("src.server.modules.base.devices.basic_storage"),
+        ["base/export_bus"] = require("src.server.modules.base.devices.export_bus"),
+        ["base/import_bus"] = require("src.server.modules.base.devices.import_bus"),
+        ["base/player_interface"] = require("src.server.modules.base.devices.player_interface"),
     }
 end
 
@@ -18,7 +18,7 @@ local function supports(config, deviceType)
     return false
 end
 
-out.load = function(config)
+out.load = function(config, network, logger)
     local devices = getDevices()
     for id, device in pairs(devices) do
         if not supports(config, id) then
