@@ -8,9 +8,11 @@ local Command = ClassBuilder:new()
 -- If extending from this class, be sure to call this method in your constructor (see internals of this method as a reference).
 --- @protected
 --- @see Command.new
---- @param name string
-function Command:__new(name)
+--- @param name string Name of the command
+--- @param network Network Network on which this command can submit events through
+function Command:__new(name, network)
     self.name = name
+    self.network = network
     self.logger = Logger:new(name)
 end
 
@@ -21,7 +23,7 @@ end
 
 --- @param short boolean?
 function Command:getName(short)
-    return short and self.name:gsub(".*:", "") or self.name
+    return short and self.name:gsub("^.*/", "") or self.name
 end
 
 --- @param words string[]
