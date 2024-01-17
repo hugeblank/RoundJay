@@ -127,18 +127,19 @@ end
 --- @return integer # The amount of items taken.
 function Item:take(toLocation, toSlot, count, fromIndex)
     count = math.min(count, self.nbt.maxCount)
-    fromIndex = fromIndex or 1
-    local slot = self.slots[fromIndex]
-    while slot and slot:getCount() == 0 do
-        table.remove(self.slots, fromIndex)
-        fromIndex = 1
-        slot = self.slots[fromIndex]
+    target = count
+    while count > 0 do
+        slot = self.slots[1]
+        local amt = slot:take(toLocation, toSlot, count)
+        if amt == 0 then
+            break -- toSlot is presumably full, nothing we can do about that.
+        end
+        count = count - amt
+        if slot:getCount() == 0 and slot == self.slots[1] then
+            table.remove(self.slots, 1)
+        end
     end
-    if slot then
-        local amount = slot:take(toLocation, toSlot, count)
-        return amount
-    end
-    return 0
+    return target - count
 end
 
 return Item
