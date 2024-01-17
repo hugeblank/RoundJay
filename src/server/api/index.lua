@@ -148,12 +148,12 @@ end
 --- Partially fill non-empty slots in fromItem with the items in slots from toItem
 --- @param toItem Item
 --- @param fromItem Item
---- @return integer
-local function fillPartial(toItem, fromItem)
-    local amount = 0
+--- @param amount integer
+--- @return integer amount
+local function fillPartial(toItem, fromItem, amount)
     os.pullEvent(paralyze.batch.ivalue(toItem.slots, function(toSlot)
         if toSlot:getCount() < toItem.nbt.maxCount then
-            amount = amount + toSlot:putItem(fromItem)
+            amount = amount - toSlot:putItem(fromItem, amount)
         end
     end))
     return amount
@@ -178,7 +178,7 @@ function Index:move(otherIndex, item, amount)
     amount = math.min(amount, fromItem:getCount())
     local o = amount -- Hold the amount to subtract from when we're finished moving items
     if toItem then -- If there's a matching item in the index we're moving the items to
-        amount = amount - fillPartial(toItem, fromItem)
+        amount = fillPartial(toItem, fromItem, amount)
     end
     if amount > 0 then -- If there's still more items to be moved
         -- This part of the function assumes that all partially filled slots in the destination inventory are full.
@@ -215,7 +215,7 @@ function Index:move(otherIndex, item, amount)
         for _, slot in ipairs(slots) do -- Add all the new slots created by the transfer
             toItem:addSlot(slot)
         end
-        amount = amount - fillPartial(toItem, fromItem)
+        amount = fillPartial(toItem, fromItem, amount)
     end
     if fromItem:getCount() == 0 then -- If we cleared out the item from the source, remove it from the index
         self:removeItem(fromItem)
