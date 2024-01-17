@@ -56,6 +56,11 @@ function Item:getDisplayName(raw)
     end
 end
 
+--- Gets the amount of slots associated with this item
+--- @return integer slotCount
+function Item:getSlotCount()
+    return #self.slots
+end
 
 --- Add a slot to this item.
 -- Slot hashes MUST match between the keytable and the slot argument!
@@ -118,14 +123,16 @@ end
 --- @param toLocation string The inventory to put the items
 --- @param toSlot integer The slot to put the items
 --- @param count integer The amount of items to provide. If greater than the total amount of items, will pull from all slots.
---- @param slotOffset integer?
+--- @param fromIndex? integer The index in this items slot index to pull from
 --- @return integer # The amount of items taken.
-function Item:take(toLocation, toSlot, count, slotOffset)
+function Item:take(toLocation, toSlot, count, fromIndex)
     count = math.min(count, self.nbt.maxCount)
-    local slot = self.slots[slotOffset or 1] --- @type Slot
+    fromIndex = fromIndex or 1
+    local slot = self.slots[fromIndex]
     while slot and slot:getCount() == 0 do
-        table.remove(self.slots, 1)
-        slot = self.slots[1]
+        table.remove(self.slots, fromIndex)
+        fromIndex = 1
+        slot = self.slots[fromIndex]
     end
     if slot then
         local amount = slot:take(toLocation, toSlot, count)
