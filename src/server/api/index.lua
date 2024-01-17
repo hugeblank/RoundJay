@@ -151,11 +151,15 @@ end
 --- @param amount integer
 --- @return integer amount
 local function fillPartial(toItem, fromItem, amount)
-    os.pullEvent(paralyze.batch.ivalue(toItem.slots, function(toSlot)
-        if toSlot:getCount() < toItem.nbt.maxCount then
-            amount = amount - toSlot:putItem(fromItem, amount)
-        end
-    end))
+    if amount > 0 then
+        os.pullEvent(paralyze.batch.ivalue(toItem.slots, function(toSlot)
+            if toSlot:getCount() < toItem.nbt.maxCount then
+                local amt = toSlot:putItem(fromItem, amount)
+                -- await value before decrementing
+                amount = amount - amt
+            end
+        end))
+    end
     return amount
 end
 
@@ -177,7 +181,7 @@ function Index:move(otherIndex, item, amount)
 
     amount = math.min(amount, fromItem:getCount())
     local o = amount -- Hold the amount to subtract from when we're finished moving items
-    if toItem then -- If there's a matching item in the index we're moving the items to
+    if toItem then   -- If there's a matching item in the index we're moving the items to
         amount = fillPartial(toItem, fromItem, amount)
     end
     if amount > 0 then -- If there's still more items to be moved
