@@ -16,9 +16,59 @@ do
     end
 end
 
+local sx, sy = term.getSize()
+--- @class WindowTermOverwrite: WindowTerm
+local win = window.create(term.current(), 1, 1, sx, sy - 1)
+local bsx, bsy = win.getSize()
+local offset = 0
+local uphist, downhist = {}, {}
+
+local oscroll = win.scroll
+
+win.scroll = function(n, nowrite) -- you can tell I had no idea what I'm doing
+    if n == 0 then                -- reset
+        local cy = #downhist
+        if cy > 0 then
+            win.scroll(cy, true)
+            win.setCursorPos(1, bsy)
+        end
+    elseif math.abs(n) == n then -- down
+        for i = 1, n do
+            if nowrite and #downhist - 1 < 0 then
+                return
+            end
+            uphist[#uphist + 1] = table.pack(win.getLine(1))
+            oscroll(1)
+            if #downhist > 0 then
+                win.setCursorPos(1, bsy)
+                win.blit(table.unpack(table.remove(downhist, #downhist)))
+                win.setCursorPos(1, bsy - 1)
+            end
+        end
+    else -- up
+        for i = math.abs(n), 1, -1 do
+            if offset <= 0 then
+                return
+            end
+            downhist[#downhist + 1] = table.pack(win.getLine(bsy))
+            oscroll(-1)
+            if #uphist > 0 then
+                win.setCursorPos(1, 1)
+                win.blit(table.unpack(table.remove(uphist, #uphist)))
+                win.setCursorPos(1, bsy - 1)
+            end
+        end
+    end
+    offset = offset + n
+end
+
+
 logger.addGlobalListener(function(entry)
     term.setCursorBlink(false)
-    logger.renderEntry(entry)
+    local ot = term.redirect(win)
+    logger.renderEntryLevel(entry)
+    print(entry.message)
+    term.redirect(ot)
 end)
 
 
@@ -127,9 +177,7 @@ end
 
 -- Input thread
 local function main()
-    local sx, sy = term.getSize()
-    local win = window.create(term.current(), 1, 1, sx, sy - 1)
-    win.setCursorPos(1,1)
+    win.setCursorPos(1, 1)
     local ot = term.current()
     local history = {}
     while true do
@@ -158,32 +206,48 @@ local function main()
                 if cmdword == "exit" then
                     term.redirect(ot)
                     term.clear()
-                    term.setCursorPos(1,1)
+                    term.setCursorPos(1, 1)
                     return
                 end
-                local matches = {} ---@type Command[]
-                for _, command in ipairs(commands) do
-                    if command:getName() == cmdword then -- Exact match
-                        matches = { command }
-                        break
-                    elseif command:getName(true):find(cmdword) == 1 then
-                        matches[#matches + 1] = command
-                    end
-                end
-                if #matches > 1 then
-                    logger:log("error",
-                        "More than one command matches " ..
-                        cmdword .. ". Try again with more characters, or use the full command name.")
-                elseif #matches == 0 then
-                    logger:log("error", "No match found for  '" .. cmdword .. "'.")
+                if cmdword:sub(1, 1) == "!" then -- Shell argument autocompletion
+                    local shcmd = cmdword:sub(2, -1) .. " " .. table.concat(params, " ")
+                    shell.run(shcmd)
                 else
-                    matches[1]:execute(params)
+                    local matches = {} ---@type Command[]
+                    for _, command in ipairs(commands) do
+                        if command:getName() == cmdword then -- Exact match
+                            matches = { command }
+                            break
+                        elseif command:getName(true):find(cmdword) == 1 then
+                            matches[#matches + 1] = command
+                        end
+                    end
+                    if #matches > 1 then
+                        logger:log("error",
+                            "More than one command matches " ..
+                            cmdword .. ". Try again with more characters, or use the full command name.")
+                    elseif #matches == 0 then
+                        logger:log("error", "No match found for  '" .. cmdword .. "'.")
+                    else
+                        matches[1]:execute(params)
+                    end
                 end
             end
         end
     end
 end
 
-parallel.waitForAny(main, function()
+local function scroll()
+    while true do
+        local e, dir = os.pullEvent()
+        if e == "mouse_scroll" then
+            win.scroll(dir, true)
+        elseif e == "key" and dir == keys.enter then
+            win.scroll(0)
+        end
+    end
+end
+
+parallel.waitForAny(scroll, main, function()
     parallel.waitForAll(paralyze.run, table.unpack(batch))
 end)
