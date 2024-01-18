@@ -193,6 +193,15 @@ textutils = {
 ---@class MonitorPeripheral: Term
 ---@field setTextScale fun(scale: number)
 
+---@class WindowTerm: Term
+---@field getLine fun(y: integer): string, string, string
+---@field setVisible fun(visible: boolean)
+---@field isVisible fun(): boolean
+---@field redraw fun()
+---@field restoreCursor fun()
+---@field reposition fun(new_x: integer, new_y: integer, new_width: integer?, new_height: integer?, new_parent: Term?)
+
+
 ---@class Term
 term = {
     ---@param text string
@@ -257,6 +266,19 @@ term = {
     ---@param g number
     ---@param b number
     setPaletteColor = function(color, r, g, b) end,
+}
+
+---@class Window
+window = {
+    ---Returns a terminal object that is a space within the specified parent terminal object.
+    ---@param parent Term
+    ---@param nX integer
+    ---@param nY integer
+    ---@param nWidth integer
+    ---@param nHeight integer
+    ---@param bStartVisible boolean?
+    ---@return WindowTerm
+    create = function(parent, nX, nY, nWidth, nHeight, bStartVisible) end,
 }
 
 shell = {

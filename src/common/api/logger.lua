@@ -116,11 +116,16 @@ local levelcolors = {
 }
 
 Logger.renderEntry = function(entry)
+    Logger.renderEntryLevel(entry)
+    print(entry.message)
+end
+
+Logger.renderEntryLevel = function(entry)
     write("[")
     term.setTextColor(levelcolors[entry.level])
     write(entry.level)
     term.setTextColor(colors.white)
-    print("]", entry.message)
+    write("] ")
 end
 
 return Logger
