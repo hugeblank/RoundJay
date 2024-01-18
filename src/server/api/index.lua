@@ -137,8 +137,8 @@ function Index:refreshFreeCache(callback)
                 freeinv.slots[#freeinv.slots + 1] = i
             end
         end
-        for slot, info in pairs(lists[name]) do
-            if callback then
+        if callback then
+            for slot, info in pairs(lists[name]) do
                 callback(name, slot, info)
             end
         end
@@ -182,9 +182,11 @@ function Index:move(otherIndex, item, amount)
     amount = math.min(amount, fromItem:getCount())
     local o = amount -- Hold the amount to subtract from when we're finished moving items
     if toItem then   -- If there's a matching item in the index we're moving the items to
+        self.logger:log("debug", "fill partial")
         amount = fillPartial(toItem, fromItem, amount)
     end
     if amount > 0 then -- If there's still more items to be moved
+        self.logger:log("debug", "normal")
         -- This part of the function assumes that all partially filled slots in the destination inventory are full.
         -- tfns - List of functions handling full slot move operations
         local tfns, slots = {}, {}
@@ -200,7 +202,13 @@ function Index:move(otherIndex, item, amount)
                     rawdetails.nbt = nbt
                 end
                 if amount > 0 and i <= fromSlotCount then
-                    local amt = fromItem:take(emptySlot.chest, emptySlot.slot, amount, i)
+                    -- If this is the last empty slot, extract the mod of the amount with respect to the max stack size
+                    local extract = amount
+                    if i == #emptySlots then
+                        local mod = amount % fromItem.nbt.maxCount
+                        extract = mod == 0 and 64 or mod
+                    end
+                    local amt = fromItem:take(emptySlot.chest, emptySlot.slot, extract, i)
                     if amt > 0 then
                         amount = amount - amt -- Note: amount is volatile and inaccurate in this function
                         local details = table.clone(rawdetails)
@@ -219,7 +227,6 @@ function Index:move(otherIndex, item, amount)
         for _, slot in ipairs(slots) do -- Add all the new slots created by the transfer
             toItem:addSlot(slot)
         end
-        amount = fillPartial(toItem, fromItem, amount)
     end
     if fromItem:getCount() == 0 then -- If we cleared out the item from the source, remove it from the index
         self:removeItem(fromItem)
