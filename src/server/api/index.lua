@@ -88,7 +88,7 @@ function Index:reload()
     self.items = {}
     local hashes = {} --- @type table<string, Slot[]>
     self:refreshFreeCache(function(name, slot, info)
-        local slotobj = Slot:new(name, slot, info)
+        local slotobj = Slot:new(name, slot, info, self.logger)
         local exists = hashes[slotobj:getHash()]
         if exists then
             exists[#exists + 1] = slotobj
@@ -100,7 +100,7 @@ function Index:reload()
         local item = self:getItemFromHash(hash)
         if not item then
             local slot = table.remove(hslots, 1)
-            item = Item:new(slot)
+            item = Item:new(slot, self.logger)
         end
         for _, slot in ipairs(hslots) do
             item:addSlot(slot)
@@ -213,14 +213,14 @@ function Index:move(otherIndex, item, amount)
                         amount = amount - amt -- Note: amount is volatile and inaccurate in this function
                         local details = table.clone(rawdetails)
                         details.count = amt
-                        slots[#slots + 1] = Slot:new(emptySlot.chest, emptySlot.slot, details)
+                        slots[#slots + 1] = Slot:new(emptySlot.chest, emptySlot.slot, details, self.logger)
                     end
                 end
             end
         end
         os.pullEvent(paralyze.addBatch(tfns)) -- Execute calculated operations
         if not toItem then                    -- If there wasn't an item in the index we're transferring to, create one
-            toItem = Item:new(table.remove(slots, 1))
+            toItem = Item:new(table.remove(slots, 1), self.logger)
             otherIndex:addItem(toItem)
             -- One more pass over all the new slots
         end
