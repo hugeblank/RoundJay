@@ -1,4 +1,3 @@
-local logger = require("src.common.api.logger"):new("item")
 local table = require "src.common.api.tablex"
 local ClassBuilder = require "src.common.api.class"
 local Slot = require "src.server.api.slot"
@@ -6,20 +5,23 @@ local Slot = require "src.server.api.slot"
 --- Class whose objects represent a specific item across all slots in the storage system.
 -- <p><b>Note:</b> functions marked with ⚠️ may yield.</p>
 --- @class (exact) Item: Class
---- @field new fun(self:Class, slot: Slot): Item --- ⚠️ Create a new item.
+--- @field new fun(self:Class, slot: Slot, logger: Logger): Item --- ⚠️ Create a new item.
 --- @field private hash string
 --- @field slots Slot[]
+--- @field logger Logger
 --- @field nbt table
 local Item = ClassBuilder:new()
 
 --- Internal constructor for Item object
 --- @protected
 --- @param slot Slot
+--- @param logger Logger
 --- @see Item.new
-function Item:__new(slot)
+function Item:__new(slot, logger)
     local key, slots = {}, { slot }
     self.hash = slot:getHash()
     self.slots = slots
+    self.logger = logger
     -- yielding
     self.nbt = slot:getNbtDetails()
 end
@@ -66,7 +68,9 @@ end
 -- Slot hashes MUST match between the keytable and the slot argument!
 --- @param slot Slot The slot to add to this item.
 function Item:addSlot(slot)
-    assert(slot:getHash() == self.hash, "hash mismatch! expected " .. self.hash .. " got " .. slot:getHash())
+    if slot:getHash() == self.hash then
+        self.logger:log("warn", "hash mismatch! expected " .. self.hash .. " got " .. slot:getHash())
+    end
     table.insert(self.slots, slot)
 end
 

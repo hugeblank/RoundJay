@@ -1,4 +1,3 @@
-local logger = require("src.common.api.logger"):new("slot")
 local expect = require "cc.expect"
 local table = require "src.common.api.tablex"
 local ClassBuilder = require "src.common.api.class"
@@ -6,8 +5,9 @@ local ClassBuilder = require "src.common.api.class"
 --- Class whose objects represents a single item stack in a slot in an inventory.
 -- <p><b>Note:</b> functions marked with ⚠️ may yield.</p>
 --- @class (exact) Slot: Class
---- @field new fun(self: Slot, inventory: string, slot: integer, details:basicDetails): Slot -- Constructor for a slot object
+--- @field new fun(self: Slot, inventory: string, slot: integer, details:basicDetails, logger: Logger): Slot -- Constructor for a slot object
 --- @field private inventory string
+--- @field private logger Logger
 --- @field private slot integer
 --- @field private details basicDetails
 local Slot = ClassBuilder:new()
@@ -25,13 +25,16 @@ local Slot = ClassBuilder:new()
 --- @param inventory string
 --- @param slot integer
 --- @param details basicDetails
-function Slot:__new(inventory, slot, details)
+--- @param logger Logger
+function Slot:__new(inventory, slot, details, logger)
     expect(1, inventory, "string")
     expect(2, slot, "number")
     expect(3, details, "table")
+    expect(4, logger, "table")
     self.inventory = inventory
     self.slot = slot
     self.details = details
+    self.logger = logger
 end
 
 --- Get the unique hash of the item contained in a slot.
@@ -80,7 +83,7 @@ end
 --- @return integer # The number of items taken from the slot.
 function Slot:take(to, tSlot, amount)
     local c = peripheral.call(self.inventory, "pushItems", to, self.slot, amount, tSlot)
-    logger:log("debug", to, self.slot, amount, tSlot, "->", c)
+    self.logger:log("debug", to, self.slot, amount, tSlot, "->", c)
     self.details.count = self.details.count-c
     return c
 end
