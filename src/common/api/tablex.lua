@@ -8,12 +8,19 @@ local function cloneInternal(t, map)
     if type(t) ~= "table" then
         return t
     end
+
+    local mt = getmetatable(t)
+    if mt then
+        setmetatable(t, nil)
+    end
+
     local out = {}
     if map[t] then
         return map[t]
     else
         map[t] = out
     end
+
     for k, v in pairs(t) do
         if type(k) == "table" then
             k = cloneInternal(k, map)
@@ -24,6 +31,13 @@ local function cloneInternal(t, map)
             out[k] = v
         end
     end
+
+    if mt then
+        setmetatable(t, mt)
+        mt = cloneInternal(mt, map)
+        out = setmetatable(out, mt)
+    end
+
     return out
 end
 
