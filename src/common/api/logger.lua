@@ -41,7 +41,7 @@ end
 
 ---@class loggerEntry
 ---@field source string
----@field level string
+---@field level "debug"|"info"|"warn"|"error"|"crit"
 ---@field message string
 ---@field timestamp string
 ---@field epoch integer

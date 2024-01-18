@@ -41,10 +41,12 @@ function PlayerInterface:__new(id, playerInterfaceConfig, network)
     local log = self.network:addBroadcast("log")
     self.completion_names = self.network:addBroadcast("completion_names")
     self.logger:addListener(function(entry)
-        os.queueEvent(log, {
-            did = self.id,
-            entry = entry
-        })
+        if entry.level ~= "debug" then
+            os.queueEvent(log, {
+                did = self.id,
+                entry = entry
+            })
+        end
     end)
 end
 
