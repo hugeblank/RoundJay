@@ -23,7 +23,11 @@ end
 ---Get all registered devices
 ---@return Device[]
 function registry.getDevices()
-    return table.clone(network)
+    local out = {}
+    for k, v in ipairs(network) do
+        out[k] = v
+    end
+    return out
 end
 
 return registry

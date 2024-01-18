@@ -101,7 +101,7 @@ function Item:details()
     if #self.slots == 0 then
         return
     end
-    local o = table.clone(self.slots[1]:getBasicDetails()) ---@cast o table
+    local o = self.slots[1]:getBasicDetails() ---@cast o table
     o.count = nil
     local sinfo = {}
     for _, slot in ipairs(self.slots) do

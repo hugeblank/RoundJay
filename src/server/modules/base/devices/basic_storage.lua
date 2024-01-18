@@ -155,16 +155,4 @@ function BasicStorage:completeQuery(input)
     return matches
 end
 
-function BasicStorage:run()
-    --[[while true do
-        local out = {"----------"}
-        for _, item in pairs(self.index:get()) do
-            out[#out+1] = table.concat({item:getIdentifier(), item:getCount(), "#slots", #item.slots}, " ")
-        end
-        out[#out + 1] = "----------"
-        self.logger:log("debug", table.concat(out, "\n"))
-        sleep(5)
-    end]]
-end
-
 return BasicStorage
