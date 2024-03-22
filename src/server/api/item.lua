@@ -19,7 +19,7 @@ local Item = ClassBuilder:new()
 --- @see Item.new
 function Item:__new(slot, logger)
     local key, slots = {}, { slot }
-    print(debug.traceback("slot: "..tostring(slot)))
+    -- print(debug.traceback("slot: "..tostring(slot)))
     self.hash = slot:getHash()
     self.slots = slots
     self.logger = logger
