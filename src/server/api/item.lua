@@ -19,6 +19,7 @@ local Item = ClassBuilder:new()
 --- @see Item.new
 function Item:__new(slot, logger)
     local key, slots = {}, { slot }
+    print(debug.traceback("slot: "..tostring(slot)))
     self.hash = slot:getHash()
     self.slots = slots
     self.logger = logger
@@ -68,7 +69,7 @@ end
 -- Slot hashes MUST match between the keytable and the slot argument!
 --- @param slot Slot The slot to add to this item.
 function Item:addSlot(slot)
-    if slot:getHash() == self.hash then
+    if slot:getHash() ~= self.hash then
         self.logger:log("warn", "hash mismatch! expected " .. self.hash .. " got " .. slot:getHash())
     end
     table.insert(self.slots, slot)
